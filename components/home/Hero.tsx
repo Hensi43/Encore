@@ -28,45 +28,6 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             </div>
 
-            {/* Roomi Darwaza Split Animation Layer (Z-10: Behind Text, Above Video) */}
-            <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none flex items-end justify-center pb-0 md:pb-0">
-                {/* Left Half */}
-                <motion.div
-                    initial={{ x: '-100%', opacity: 0 }}
-                    animate={{ x: '0%', opacity: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-                    className="relative w-1/2 h-full md:h-[90%] flex justify-end mt-auto"
-                >
-                    <div className="relative w-full h-full">
-                        <Image
-                            src="/images/roomi_gate_symmetric.png"
-                            alt="Roomi Left"
-                            fill
-                            className="object-contain object-left-bottom"
-                            style={{ objectPosition: 'left bottom' }}
-                        />
-                    </div>
-                </motion.div>
-
-                {/* Right Half */}
-                <motion.div
-                    initial={{ x: '100%', opacity: 0 }}
-                    animate={{ x: '0%', opacity: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-                    className="relative w-1/2 h-full md:h-[90%] flex justify-start mt-auto"
-                >
-                    <div className="relative w-full h-full">
-                        <Image
-                            src="/images/roomi_gate_symmetric.png"
-                            alt="Roomi Right"
-                            fill
-                            className="object-contain object-right-bottom"
-                            style={{ objectPosition: 'right bottom' }}
-                        />
-                    </div>
-                </motion.div>
-            </div>
-
             {/* Content High Z-Index */}
             <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-20 md:mt-0">
                 <motion.div

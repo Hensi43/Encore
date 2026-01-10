@@ -32,7 +32,7 @@ export default function PassportCard({ user }: { user: User }) {
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 relative">
-                            <Image src="/images/iet_logo.png" alt="Logo" fill className="object-contain rounded-full" />
+                            <Image src="/images/iet_logo_new.png" alt="Logo" fill className="object-contain rounded-full" />
                         </div>
                         <div>
                             <h3 className="text-gold font-cinzel font-bold text-sm tracking-widest">ENCORE 26</h3>
