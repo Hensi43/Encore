@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,6 +9,13 @@ import Image from 'next/image';
 export default function Hero() {
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 500], [0, 100]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsLoggedIn(!!localStorage.getItem('encore_user'));
+        }
+    }, []);
 
     // Parallax logic for Roomi layer - REMOVED
     // const rumiY = useTransform(scrollY, [0, 500], [100, 0]);
@@ -47,9 +55,9 @@ export default function Hero() {
                     </h2>
 
                     <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                        <Link href="/events">
+                        <Link href={isLoggedIn ? "/dashboard" : "/login"}>
                             <Button size="lg" className="w-48 text-lg hover:scale-105 transition-transform bg-gold text-black border-gold">
-                                Register Now
+                                {isLoggedIn ? "Go to Dashboard" : "Register Now"}
                             </Button>
                         </Link>
                         <Link href="/events">
