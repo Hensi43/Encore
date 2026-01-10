@@ -21,8 +21,8 @@ export default function About() {
                 >
                     <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 relative">
                         <Image
-                            src="/images/s3.svg" // Using s3.svg as seen in index.html
-                            alt="About Encore"
+                            src="/images/rumi.png"
+                            alt="Roomi Darwaza"
                             fill
                             className="object-cover"
                         />

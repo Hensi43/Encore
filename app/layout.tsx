@@ -3,7 +3,6 @@ import { Cinzel, Marcellus } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Loader from "@/components/ui/Loader";
-import CustomCursor from "@/components/ui/CustomCursor";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -29,12 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth cursor-none">
+    <html lang="en" className="dark scroll-smooth">
       <body
         className={`${cinzel.variable} ${marcellus.variable} antialiased bg-black text-white overflow-x-hidden`}
       >
         <Loader />
-        <CustomCursor />
         <Navbar />
         {children}
         <Footer />

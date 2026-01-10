@@ -9,8 +9,8 @@ export default function Hero() {
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 500], [0, 100]);
 
-    // Parallax logic for Roomi layer
-    const rumiY = useTransform(scrollY, [0, 500], [100, 0]);
+    // Parallax logic for Roomi layer - REMOVED
+    // const rumiY = useTransform(scrollY, [0, 500], [100, 0]);
 
     return (
         <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
@@ -28,29 +28,8 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             </div>
 
-            {/* Roomi Darwaza Layer */}
-            <motion.div
-                className="absolute bottom-0 left-0 w-full z-10 pointer-events-none"
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.5, delay: 0.5 }}
-                style={{ y: rumiY }}
-            >
-                <div className="relative h-[40vh] md:h-[60vh] w-full">
-                    <Image
-                        src="/images/rumi.png"
-                        alt="Roomi Darwaza"
-                        fill
-                        className="object-contain object-bottom drop-shadow-2xl"
-                        priority
-                    />
-                    {/* Glow effect */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-gold/20 blur-[100px] -z-10" />
-                </div>
-            </motion.div>
-
             {/* Content High Z-Index */}
-            <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-[-15vh]">
+            <div className="relative z-20 text-center px-4 max-w-5xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

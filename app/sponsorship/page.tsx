@@ -29,18 +29,20 @@ export default function SponsorshipPage() {
                     {sponsors.map((src, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, scale: 0.8 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.05 }}
+                            transition={{ delay: index * 0.05, duration: 0.5 }}
                             viewport={{ once: true }}
-                            className="aspect-[3/2] bg-white rounded-xl overflow-hidden relative group hover:shadow-[0_0_20px_rgba(255,165,0,0.3)] transition-all duration-300"
+                            className="aspect-[3/2] flex items-center justify-center relative group"
                         >
-                            <Image
-                                src={src}
-                                alt={`Sponsor ${index + 1}`}
-                                fill
-                                className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                            />
+                            <div className="relative w-3/4 h-3/4 grayscale group-hover:grayscale-0 transition-all duration-500">
+                                <Image
+                                    src={src}
+                                    alt={`Sponsor ${index + 1}`}
+                                    fill
+                                    className="object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-500"
+                                />
+                            </div>
                         </motion.div>
                     ))}
                 </div>

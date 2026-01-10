@@ -21,16 +21,8 @@ body {
 }
 
 /* Custom Utilities */
-html,
-body,
-a,
-button,
-input,
-textarea,
-select,
-[role="button"] {
-  cursor: none !important;
-}
+/* Custom Utilities */
+/* Cursor hidden rule removed */
 
 .text-gold {
   color: var(--nawabi-gold);
