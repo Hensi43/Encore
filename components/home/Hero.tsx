@@ -39,11 +39,11 @@ export default function Hero() {
                 >
                     <div className="relative w-full h-full">
                         <Image
-                            src="/images/roomi_gate_v2.png"
+                            src="/images/roomi_gate_graphic.png"
                             alt="Roomi Left"
                             fill
-                            className="object-contain object-right-bottom"
-                            style={{ objectPosition: 'right bottom' }}
+                            className="object-contain object-left-bottom"
+                            style={{ objectPosition: 'left bottom' }}
                         />
                     </div>
                 </motion.div>
@@ -57,11 +57,11 @@ export default function Hero() {
                 >
                     <div className="relative w-full h-full">
                         <Image
-                            src="/images/roomi_gate_v2.png"
+                            src="/images/roomi_gate_graphic.png"
                             alt="Roomi Right"
                             fill
-                            className="object-contain object-left-bottom"
-                            style={{ objectPosition: 'left bottom' }}
+                            className="object-contain object-right-bottom"
+                            style={{ objectPosition: 'right bottom' }}
                         />
                     </div>
                 </motion.div>
