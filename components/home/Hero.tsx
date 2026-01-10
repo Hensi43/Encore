@@ -43,46 +43,45 @@ export default function Hero() {
                         className="object-contain drop-shadow-[0_0_15px_rgba(255,215,0,0.3)]"
                     />
                 </motion.div>
-                <div className="relative z-20 text-center px-4 max-w-5xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                        <p className="text-gold font-marcellus text-lg md:text-xl tracking-[0.2em] mb-4 uppercase">
-                            The Annual Cultural Fest of IET Lucknow
-                        </p>
-                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-cinzel text-white mb-6 tracking-tight relative drop-shadow-lg">
-                            ENCORE
-                            <span className="absolute -top-6 -right-8 md:-top-10 md:-right-10 text-2xl md:text-4xl text-gold/80 rotate-12 font-script">26</span>
-                        </h1>
-                        <h2 className="text-2xl md:text-4xl font-cinzel text-gray-300 tracking-widest mb-10">
-                            NAWABI ELEGANCE
-                        </h2>
-
-                        <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                            <Link href="/events">
-                                <Button size="lg" className="w-48 text-lg hover:scale-105 transition-transform bg-gold text-black border-gold">
-                                    Register Now
-                                </Button>
-                            </Link>
-                            <Link href="/events">
-                                <Button variant="outline" size="lg" className="w-48 text-lg hover:scale-105 transition-transform backdrop-blur-sm bg-black/30">
-                                    Explore Events
-                                </Button>
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* Scroll Indicator */}
                 <motion.div
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30"
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
                 >
-                    <div className="w-[1px] h-24 bg-gradient-to-b from-gold to-transparent" />
+                    <p className="text-gold font-marcellus text-lg md:text-xl tracking-[0.2em] mb-4 uppercase">
+                        The Annual Cultural Fest of IET Lucknow
+                    </p>
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-cinzel text-white mb-6 tracking-tight relative drop-shadow-lg">
+                        ENCORE
+                        <span className="absolute -top-6 -right-8 md:-top-10 md:-right-10 text-2xl md:text-4xl text-gold/80 rotate-12 font-script">26</span>
+                    </h1>
+                    <h2 className="text-2xl md:text-4xl font-cinzel text-gray-300 tracking-widest mb-10">
+                        NAWABI ELEGANCE
+                    </h2>
+
+                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+                        <Link href="/events">
+                            <Button size="lg" className="w-48 text-lg hover:scale-105 transition-transform bg-gold text-black border-gold">
+                                Register Now
+                            </Button>
+                        </Link>
+                        <Link href="/events">
+                            <Button variant="outline" size="lg" className="w-48 text-lg hover:scale-105 transition-transform backdrop-blur-sm bg-black/30">
+                                Explore Events
+                            </Button>
+                        </Link>
+                    </div>
                 </motion.div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <motion.div
+                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30"
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+            >
+                <div className="w-[1px] h-24 bg-gradient-to-b from-gold to-transparent" />
+            </motion.div>
         </section>
     );
 }
