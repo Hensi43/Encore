@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
@@ -49,6 +50,10 @@ export default function Navbar() {
         { name: 'CA Portal', href: '/ca-portal' },
         { name: 'Sponsorship', href: '/sponsorship' },
     ];
+
+    const pathname = usePathname();
+
+    if (pathname?.startsWith('/admin')) return null;
 
     return (
         <motion.nav

@@ -19,12 +19,31 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
         phone: user.phone || ''
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const updatedUser = { ...user, ...formData, profileCompleted: true };
-        localStorage.setItem('encore_user', JSON.stringify(updatedUser));
-        onUpdate(updatedUser);
-        onClose();
+
+        try {
+            const res = await fetch('/api/user/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: user.email,
+                    ...formData,
+                    profileCompleted: true
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                onUpdate(data.user); // Update parent with new user data from server
+                alert(data.message);
+                onClose();
+            } else {
+                alert("Update failed");
+            }
+        } catch (error) {
+            alert("Network Error");
+        }
     };
 
     return (

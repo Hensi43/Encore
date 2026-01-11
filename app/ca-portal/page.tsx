@@ -4,29 +4,51 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { User, Lock, Users } from 'lucide-react';
+import { User, Lock, Users, ArrowRight } from 'lucide-react';
 
 export default function CAPortal() {
     const router = useRouter();
-    const [formData, setFormData] = useState({ name: '', referral: '', password: '' });
+    const isLogin = true; // Always login mode
+    const [formData, setFormData] = useState({ name: '', email: '', college: '' });
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleAction = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock CA Login
-        const caUser = {
-            name: formData.name,
-            role: 'Campus Ambassador',
-            referralCode: formData.referral,
-            coins: 500,
-            id: `CA-${Math.floor(Math.random() * 1000)}`
-        };
-        localStorage.setItem('encore_user', JSON.stringify(caUser));
-        router.push('/dashboard');
+        setLoading(true);
+
+        // For Login, we just check if user exists and is CA (Simplified logic for now)
+        // In real app, we'd have password auth. Here we trust email for demo/hackathon context or use generic login.
+
+        try {
+            const endpoint = isLogin ? '/api/auth/login' : '/api/ca/register';
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (isLogin && data.user.role !== 'CA') {
+                    alert('You are not registered as a Campus Ambassador');
+                    setLoading(false);
+                    return;
+                }
+                localStorage.setItem('encore_user', JSON.stringify(data.user));
+                router.push('/dashboard');
+            } else {
+                const err = await res.json();
+                alert(err.message || err.error || 'Action failed');
+            }
+        } catch (error) {
+            alert('Connection Error');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <main className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-            {/* Background Effects */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[100px]" />
                 <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-purple-900/10 rounded-full blur-[100px]" />
@@ -40,59 +62,45 @@ export default function CAPortal() {
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-cinzel text-gold mb-2">CA Portal</h1>
                     <p className="text-gray-400 font-marcellus text-sm">Join the Elite Envoys of Encore</p>
+                    {/* Dev Tool */}
+                    <button
+                        onClick={() => setFormData({
+                            name: `Ambassador ${Math.floor(Math.random() * 100)}`,
+                            email: `ca${Math.floor(Math.random() * 1000)}@test.com`,
+                            college: 'IET Lucknow'
+                        })}
+                        className="text-[10px] text-gray-600 hover:text-gold mt-2 underline"
+                    >
+                        (Dev) Auto-Fill Form
+                    </button>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-6">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-cinzel text-gold mb-2">CA Login</h1>
+                    <p className="text-gray-400 font-marcellus text-sm">Access your Ambassador Dashboard</p>
+                </div>
 
+                <form onSubmit={handleAction} className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-marcellus text-gray-300">Name</label>
-                        <div className="relative">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gold h-5 w-5" />
-                            <input
-                                type="text"
-                                required
-                                className="w-full bg-black/40 border border-white/20 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-colors"
-                                placeholder="Your Name"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            />
-                        </div>
+                        <label className="text-sm font-marcellus text-gray-300">Email (Official)</label>
+                        <input
+                            type="email"
+                            required
+                            className="w-full bg-black/40 border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-gold"
+                            placeholder="email@example.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-marcellus text-gray-300">Referral Code</label>
-                        <div className="relative">
-                            <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gold h-5 w-5" />
-                            <input
-                                type="text"
-                                required
-                                className="w-full bg-black/40 border border-white/20 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-colors"
-                                placeholder="Enter Code"
-                                value={formData.referral}
-                                onChange={(e) => setFormData({ ...formData, referral: e.target.value })}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-marcellus text-gray-300">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold h-5 w-5" />
-                            <input
-                                type="password"
-                                required
-                                className="w-full bg-black/40 border border-white/20 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-colors"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            />
-                        </div>
-                    </div>
-
-                    <Button type="submit" className="w-full py-6 text-lg">
-                        Access Portal
+                    <Button type="submit" className="w-full py-6 text-lg" disabled={loading}>
+                        {loading ? 'Verifying...' : 'Login'}
                     </Button>
                 </form>
+
+                <p className="text-xs text-center text-gray-500 mt-6">
+                    Not a Campus Ambassador? <br /> Contact the Encore Team to apply.
+                </p>
             </motion.div>
         </main>
     );

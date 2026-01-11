@@ -17,6 +17,10 @@ interface User {
     year?: string;
     phone?: string;
     profileCompleted?: boolean;
+    role?: string;
+    referralCode?: string;
+    taskInsta?: boolean;
+    taskLinkedIn?: boolean;
 }
 
 export default function Dashboard() {
@@ -25,20 +29,75 @@ export default function Dashboard() {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     useEffect(() => {
-        // Client-side only check
-        if (typeof window !== 'undefined') {
+        const fetchUser = async () => {
             const storedUser = localStorage.getItem('encore_user');
             if (!storedUser) {
                 router.push('/login');
-            } else {
-                setUser(JSON.parse(storedUser));
+                return;
             }
-        }
+
+            try {
+                const { email } = JSON.parse(storedUser);
+                const res = await fetch('/api/user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    // Map caCoins to coins for frontend compatibility
+                    setUser({ ...data.user, coins: data.user.caCoins || 0 });
+                } else {
+                    // Invalid session
+                    localStorage.removeItem('encore_user');
+                    router.push('/login');
+                }
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
+        };
+
+        fetchUser();
     }, [router]);
 
     const handleLogout = () => {
         localStorage.removeItem('encore_user');
         router.push('/');
+    };
+
+    const handleClaim = async (task: string) => {
+        if (!user) return;
+
+        // Open link first (mocking the action)
+        if (task === 'taskInsta') window.open('https://instagram.com/encore_iet', '_blank');
+        if (task === 'taskLinkedIn') window.open('https://linkedin.com/company/iet-encore', '_blank');
+
+        // Delay to simulate "checking"
+        setTimeout(async () => {
+            const confirm = window.confirm("Did you complete the task?");
+            if (!confirm) return;
+
+            try {
+                const res = await fetch('/api/user/claim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: user.email, task })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(data.message);
+                    // Update user state locally
+                    setUser({ ...user, [task]: true, coins: data.coins });
+                } else {
+                    const err = await res.json();
+                    alert(err.error);
+                }
+            } catch (e) {
+                alert("Failed to claim");
+            }
+        }, 1000);
     };
 
     const handleProfileUpdate = (updatedUser: User) => {
@@ -61,6 +120,23 @@ export default function Dashboard() {
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                             <h3 className="text-gold font-cinzel mb-4">Your Quest</h3>
                             <div className="space-y-4">
+                                {/* CA Specific View */}
+                                {user.role === 'CA' && (
+                                    <div className="bg-gold/10 border border-gold/30 rounded-lg p-4 mb-4">
+                                        <h4 className="text-gold font-cinzel text-sm mb-1">Ambassador Status</h4>
+                                        <p className="text-xs text-gray-400 mb-2">Share your code to earn rewards</p>
+                                        <div className="flex justify-between items-center bg-black/40 p-2 rounded border border-gold/20">
+                                            <code className="text-gold font-mono font-bold">{user.referralCode}</code>
+                                            <button
+                                                onClick={() => navigator.clipboard.writeText(user.referralCode || '')}
+                                                className="text-xs text-gray-400 hover:text-white"
+                                            >
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="text-gray-400">Profile Completion</span>
                                     <span className="text-gold">{progress}%</span>
@@ -102,6 +178,28 @@ export default function Dashboard() {
                             <p className="text-gray-400 font-marcellus">Here is what is happening at Encore 26</p>
                         </div>
 
+                        {/* Social Quests */}
+                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                            <h3 className="text-xl font-cinzel text-white mb-4">Social Quests</h3>
+                            <p className="text-xs text-gray-400 mb-4">Promote Encore to earn Nawabi Coins and win prizes!</p>
+                            <div className="space-y-3">
+                                <RewardItem
+                                    title="Follow us on Instagram"
+                                    coins={50}
+                                    isClaimed={!!user.taskInsta} // double bang to ensure boolean 
+                                    onClaim={() => handleClaim('taskInsta')}
+                                    link="https://instagram.com/encore_iet"
+                                />
+                                <RewardItem
+                                    title="Connect on LinkedIn"
+                                    coins={50}
+                                    isClaimed={!!user.taskLinkedIn}
+                                    onClaim={() => handleClaim('taskLinkedIn')}
+                                    link="https://linkedin.com/company/iet-encore"
+                                />
+                            </div>
+                        </div>
+
                         {/* Dashboard Widgets */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div
@@ -122,13 +220,14 @@ export default function Dashboard() {
                             </Link>
 
                             <div
-                                onClick={() => alert("Map integration coming soon!")}
+                                onClick={() => window.open('https://www.google.com/maps/search/?api=1&query=Institute+of+Engineering+and+Technology+Lucknow', '_blank')}
                                 className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:border-gold/30 transition-colors cursor-pointer group"
                             >
-                                <MapPin className="text-gold mb-3 group-hover:scale-10 transition-transform" size={24} />
+                                <MapPin className="text-gold mb-3 group-hover:scale-110 transition-transform" size={24} />
                                 <h4 className="text-lg font-cinzel text-white">Map</h4>
-                                <p className="text-sm text-gray-400">Navigate the campus</p>
+                                <p className="text-sm text-gray-400">Navigate to IET Lucknow</p>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -140,6 +239,26 @@ export default function Dashboard() {
                 user={user}
                 onUpdate={handleProfileUpdate}
             />
-        </main>
+        </main >
+    );
+}
+
+function RewardItem({ title, coins, isClaimed, onClaim, link }: any) {
+    return (
+        <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/10">
+            <div>
+                <p className="text-white text-sm font-medium">{title}</p>
+                <p className="text-xs text-gold">+{coins} Coins</p>
+            </div>
+            <Button
+                size="sm"
+                variant={isClaimed ? "ghost" : "outline"}
+                className={isClaimed ? "text-green-500" : "border-gold text-gold hover:bg-gold hover:text-black"}
+                onClick={!isClaimed ? onClaim : undefined}
+                disabled={isClaimed}
+            >
+                {isClaimed ? "Claimed" : "Claim"}
+            </Button>
+        </div>
     );
 }

@@ -11,23 +11,34 @@ export default function LoginForm() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({ name: '', email: '', accommodation: '' });
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (step === 1 && formData.name) {
             setStep(2);
         } else if (step === 2 && formData.email) {
             setStep(3);
         } else if (step === 4) {
-            // Simulate Login after Payment
-            const user = {
-                name: formData.name,
-                email: formData.email,
-                accommodation: formData.accommodation,
-                id: `ENC-26-${Math.floor(Math.random() * 10000)}`,
-                coins: 100, // Bonus for joining
-                paymentVerified: true
-            };
-            localStorage.setItem('encore_user', JSON.stringify(user));
-            router.push('/dashboard');
+            try {
+                // Real API Call
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...formData,
+                        paymentId: `PAY-${Date.now()}` // In real flow, this comes from Razorpay response
+                    }),
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('encore_user', JSON.stringify(data.user));
+                    router.push('/dashboard');
+                } else {
+                    alert('Registration failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Connection error. Please check your network.');
+            }
         }
     };
 
@@ -36,6 +47,20 @@ export default function LoginForm() {
             <div className="mb-8 text-center">
                 <h2 className="text-3xl font-cinzel text-gold mb-2">Join the Royalty</h2>
                 <p className="text-gray-400 font-marcellus text-sm">Step into the world of Encore 26</p>
+                {/* Dev Tool */}
+                <button
+                    onClick={() => {
+                        setFormData({
+                            name: `Student ${Math.floor(Math.random() * 100)}`,
+                            email: `student${Math.floor(Math.random() * 1000)}@test.com`,
+                            accommodation: Math.random() > 0.5 ? 'yes' : 'no'
+                        });
+                        // alert("Form Data Filled! Click Next.");
+                    }}
+                    className="text-[10px] text-gray-600 hover:text-gold mt-2 underline"
+                >
+                    (Dev) Auto-Fill Data
+                </button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -59,6 +84,22 @@ export default function LoginForm() {
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     onKeyDown={(e) => e.key === 'Enter' && handleNext()}
                                     autoFocus
+                                />
+                            </div>
+                        </div>
+
+                        {/* Referral Code */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-marcellus text-gray-300">Referral Code (Optional)</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Have a CA Code?"
+                                    className="w-full bg-black/40 border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-gold transition-colors text-sm"
+                                    // @ts-ignore
+                                    value={formData.referralCode || ''}
+                                    // @ts-ignore
+                                    onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
                                 />
                             </div>
                         </div>
@@ -154,7 +195,7 @@ export default function LoginForm() {
                         <div className="space-y-4 text-center">
                             <label className="text-sm font-marcellus text-gray-300">The Royal Treasury</label>
                             <p className="text-gray-400 text-sm max-w-xs mx-auto">
-                                To secure your pass, a tribute of <span className="text-gold font-bold">₹1500</span> is required.
+                                To secure your pass, a tribute of <span className="text-gold font-bold">₹{formData.accommodation === 'yes' ? '999' : '399'}</span> is required.
                             </p>
                         </div>
                         <div className="flex gap-4">
@@ -165,9 +206,10 @@ export default function LoginForm() {
                                     const script = document.createElement('script');
                                     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
                                     script.onload = () => {
+                                        const amount = formData.accommodation === 'yes' ? 99900 : 39900;
                                         const options = {
                                             key: "YOUR_RAZORPAY_KEY_ID_HERE", // Enter the Key ID generated from the Dashboard
-                                            amount: 150000, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                                            amount: amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                                             currency: "INR",
                                             name: "Encore 26",
                                             description: "Festival Pass",
@@ -195,6 +237,25 @@ export default function LoginForm() {
                             >
                                 Pay with Razorpay
                             </Button>
+                        </div>
+                        {/* Dev Only Bypass */}
+                        <div className="text-center pt-4">
+                            <button
+                                onClick={() => {
+                                    // Submit with dummy payment ID
+                                    console.log("Simulating payment...");
+                                    const dummyEvent = { preventDefault: () => { } };
+                                    // We need to trigger the API call logic.
+                                    // Since handleNext handles the API call when step === 4, we can just call it?
+                                    // But handleNext relies on state. simpler to call the fetch logic directly or mock the state?
+                                    // handleNext() implementation above checks step === 4.
+                                    handleNext();
+                                }}
+                                className="text-xs text-gray-500 hover:text-white underline"
+                                title="Use this to test registration without paying"
+                            >
+                                (Dev Only) Simulate Successful Payment
+                            </button>
                         </div>
                     </motion.div>
                 )}

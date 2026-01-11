@@ -11,7 +11,10 @@ export default function Loader() {
         // Simulate loading time
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 2500);
+            if (typeof window !== 'undefined') {
+                (window as any).hasShownIntro = true;
+            }
+        }, 1200); // Faster duration
         return () => clearTimeout(timer);
     }, []);
 
@@ -26,42 +29,39 @@ export default function Loader() {
                     {/* Left Curtain */}
                     <motion.div
                         initial={{ x: 0 }}
-                        exit={{ x: "-100%", transition: { duration: 1.5, ease: [0.76, 0, 0.24, 1] } }}
-                        className="absolute left-0 top-0 h-full w-1/2 bg-black z-10 flex items-center justify-end border-r border-gold/20"
+                        exit={{ x: "-100%", transition: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
+                        className="absolute left-0 top-0 h-full w-1/2 z-20 flex items-center justify-end"
+                        style={{
+                            background: "linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 20%, #050505 40%, #151515 60%, #020202 80%, #0a0a0a 100%)",
+                            boxShadow: "10px 0 60px rgba(0,0,0,0.9), inset -10px 0 20px rgba(0,0,0,0.8)"
+                        }}
                     >
-                        <div className="absolute right-0 top-0 h-full w-[2px] bg-gradient-to-b from-transparent via-gold to-transparent opacity-50" />
+                        {/* Texture Overlay */}
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')] pointer-events-none mix-blend-overlay"></div>
+
+                        {/* Gold Border/Tassel hint at edge */}
+                        <div className="absolute right-0 top-0 h-full w-[4px] bg-gradient-to-b from-[#8B6508] via-[#FFD700] to-[#8B6508] shadow-[0_0_15px_#FFD700_80]" />
                     </motion.div>
 
                     {/* Right Curtain */}
                     <motion.div
                         initial={{ x: 0 }}
-                        exit={{ x: "100%", transition: { duration: 1.5, ease: [0.76, 0, 0.24, 1] } }}
-                        className="absolute right-0 top-0 h-full w-1/2 bg-black z-10 flex items-center justify-start border-l border-gold/20"
+                        exit={{ x: "100%", transition: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
+                        className="absolute right-0 top-0 h-full w-1/2 z-20 flex items-center justify-start"
+                        style={{
+                            background: "linear-gradient(90deg, #0a0a0a 0%, #020202 20%, #151515 40%, #050505 60%, #1a1a1a 80%, #0a0a0a 100%)",
+                            boxShadow: "-10px 0 60px rgba(0,0,0,0.9), inset 10px 0 20px rgba(0,0,0,0.8)"
+                        }}
                     >
-                        <div className="absolute left-0 top-0 h-full w-[2px] bg-gradient-to-b from-transparent via-gold to-transparent opacity-50" />
+                        {/* Texture Overlay */}
+                        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/dark-leather.png')] pointer-events-none mix-blend-overlay"></div>
+
+                        {/* Gold Border/Tassel hint at edge */}
+                        <div className="absolute left-0 top-0 h-full w-[4px] bg-gradient-to-b from-[#8B6508] via-[#FFD700] to-[#8B6508] shadow-[0_0_15px_#FFD700_80]" />
                     </motion.div>
 
                     {/* Center Content */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.5 }}
-                        className="relative z-20 flex flex-col items-center"
-                    >
-                        <div className="relative w-32 h-32 mb-6">
-                            <Image src="/images/iet_logo_new.png" alt="Loader Logo" fill className="object-contain" />
-                        </div>
-                        <h1 className="text-4xl font-cinzel text-gold font-bold tracking-[0.2em] mb-2 text-center">ENCORE</h1>
-                        <p className="text-gray-400 font-marcellus text-sm tracking-widest uppercase">Nawabi Elegance</p>
-
-                        {/* Progress Bar */}
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: 200 }}
-                            transition={{ duration: 2, ease: "easeInOut" }}
-                            className="h-[1px] bg-gold mt-8"
-                        />
-                    </motion.div>
+                    {/* Center Content Removed as per request */}
                 </motion.div>
             )}
         </AnimatePresence>

@@ -3,6 +3,7 @@ import { Cinzel, Marcellus } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Loader from "@/components/ui/Loader";
+import CornerCurtains from "@/components/ui/CornerCurtains";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -33,6 +34,7 @@ export default function RootLayout({
         className={`${cinzel.variable} ${marcellus.variable} antialiased bg-black text-white overflow-x-hidden`}
       >
         <Loader />
+        <CornerCurtains />
         <Navbar />
         {children}
         <Footer />

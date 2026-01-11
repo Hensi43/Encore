@@ -1,81 +1,143 @@
 "use client";
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Hero() {
-    const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 100]);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // Dynamic animation delays
+    const [delays, setDelays] = useState({ text: 2.8, gate: 3.6 });
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setIsLoggedIn(!!localStorage.getItem('encore_user'));
+
+            // Check if we've already shown the intro in this session
+            if ((window as any).hasShownIntro) {
+                setDelays({ text: 0.3, gate: 0.6 });
+            }
         }
     }, []);
 
-    // Parallax logic for Roomi layer - REMOVED
-    // const rumiY = useTransform(scrollY, [0, 500], [100, 0]);
+    // Animation Variants
+    const textVariant: any = {
+        hidden: { opacity: 0, scale: 0.9, y: 20 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+                duration: 0.8,
+                ease: "easeInOut",
+                delay: delays.text // Wait for curtains (Loader) to start opening (2.5s)
+            }
+        }
+    };
+
+    const leftGateVariant: any = {
+        hidden: { x: '-100%', opacity: 0 },
+        visible: {
+            x: '0%',
+            opacity: 1,
+            transition: {
+                duration: 0.8,
+                ease: "easeInOut",
+                delay: delays.gate // Starts after text reveal
+            }
+        }
+    };
+
+    const rightGateVariant: any = {
+        hidden: { x: '100%', opacity: 0 },
+        visible: {
+            x: '0%',
+            opacity: 1,
+            transition: {
+                duration: 0.8,
+                ease: "easeInOut",
+                delay: delays.gate
+            }
+        }
+    };
 
     return (
-        <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-            {/* Background Video */}
-            <div className="absolute inset-0 z-0">
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="object-cover w-full h-full opacity-50 pointer-events-none"
-                >
-                    <source src="/video/bg.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-            </div>
+        <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+            {/* Pure Black Background - Video Removed */}
 
-            {/* Content High Z-Index */}
-            <div className="relative z-20 text-center px-4 max-w-5xl mx-auto mt-20 md:mt-0">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                    <p className="text-gold font-marcellus text-lg md:text-xl tracking-[0.2em] mb-4 uppercase">
-                        The Annual Cultural Fest of IET Lucknow
-                    </p>
-                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-cinzel text-white mb-6 tracking-tight relative drop-shadow-lg">
-                        ENCORE
-                        <span className="absolute -top-6 -right-8 md:-top-10 md:-right-10 text-2xl md:text-4xl text-gold/80 rotate-12 font-script">26</span>
-                    </h1>
-                    <h2 className="text-2xl md:text-4xl font-cinzel text-gray-300 tracking-widest mb-10">
-                        NAWABI ELEGANCE
-                    </h2>
+            {/* --- Decorative Architectural Images (Rumi Darwaza Halves) --- */}
 
-                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                        <Link href={isLoggedIn ? "/dashboard" : "/login"}>
-                            <Button size="lg" className="w-48 text-lg hover:scale-105 transition-transform bg-gold text-black border-gold">
-                                {isLoggedIn ? "Go to Dashboard" : "Register Now"}
-                            </Button>
-                        </Link>
-                        <Link href="/events">
-                            <Button variant="outline" size="lg" className="w-48 text-lg hover:scale-105 transition-transform backdrop-blur-sm bg-black/30">
-                                Explore Events
-                            </Button>
-                        </Link>
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* Scroll Indicator */}
+            {/* Left Half - Bottom Left */}
             <motion.div
-                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                variants={leftGateVariant}
+                initial="hidden"
+                animate="visible"
+                className="absolute bottom-0 left-0 w-[40vw] h-[50vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
             >
-                <div className="w-[1px] h-24 bg-gradient-to-b from-gold to-transparent" />
+                <div className="relative w-full h-full">
+                    <Image
+                        src="/images/roomi_right.png"
+                        alt="Roomi Left"
+                        fill
+                        className="object-contain object-bottom md:object-left-bottom"
+                        priority
+                    />
+                </div>
+            </motion.div>
+
+            {/* Right Half - Bottom Right */}
+            <motion.div
+                variants={rightGateVariant}
+                initial="hidden"
+                animate="visible"
+                className="absolute bottom-0 right-0 w-[40vw] h-[50vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
+            >
+                <div className="relative w-full h-full">
+                    <Image
+                        src="/images/roomi_left.png"
+                        alt="Roomi Right"
+                        fill
+                        className="object-contain object-bottom md:object-right-bottom"
+                        priority
+                    />
+                </div>
+            </motion.div>
+
+
+            {/* --- Main Content (High Z-Index) --- */}
+            <motion.div
+                className="relative z-20 text-center px-4 max-w-5xl mx-auto"
+                variants={textVariant}
+                initial="hidden"
+                animate="visible"
+            >
+                <p className="text-gold font-marcellus text-sm md:text-lg tracking-[0.3em] mb-6 uppercase">
+                    The Annual Cultural Fest of IET Lucknow
+                </p>
+
+                <h1 className="text-6xl md:text-9xl font-cinzel text-white mb-4 tracking-tight relative">
+                    ENCORE
+                    <span className="absolute -top-4 -right-6 md:-top-8 md:-right-12 text-2xl md:text-4xl text-gold font-script rotate-12">26</span>
+                </h1>
+
+                <h2 className="text-xl md:text-3xl font-cinzel text-gray-400 tracking-[0.2em] mb-12">
+                    NAWABI ELEGANCE
+                </h2>
+
+                <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+                    <Link href={isLoggedIn ? "/dashboard" : "/login"}>
+                        <Button size="lg" className="w-48 text-lg bg-gold text-black border-gold hover:bg-gold/90 transition-all duration-300">
+                            {isLoggedIn ? "Dashboard" : "Register Now"}
+                        </Button>
+                    </Link>
+                    <Link href="/events">
+                        <Button variant="outline" size="lg" className="w-48 text-lg border-white/20 text-white hover:bg-white/10 transition-all duration-300">
+                            Explore Events
+                        </Button>
+                    </Link>
+                </div>
             </motion.div>
         </section>
     );

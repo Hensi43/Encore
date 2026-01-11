@@ -24,7 +24,7 @@ export default function Flashback() {
     const x2 = useTransform(scrollYProgress, [0, 1], [-1000, 0]);
 
     return (
-        <section ref={containerRef} className="relative py-24 bg-black overflow-hidden">
+        <section ref={containerRef} className="relative pt-4 pb-24 bg-black overflow-hidden">
             {/* Background Vibe */}
             <div className="absolute inset-0 opacity-20 pointer-events-none">
                 <Image
