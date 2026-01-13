@@ -63,7 +63,7 @@ export default function Navbar() {
             animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
         >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-[22vw]">
                 <div className="flex justify-between items-center h-20">
 
                     {/* Logo Left */}

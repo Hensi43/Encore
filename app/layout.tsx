@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <body
-        className={`${cinzel.variable} ${marcellus.variable} antialiased bg-black text-white overflow-x-hidden`}
+        className={`${cinzel.variable} ${marcellus.variable} antialiased bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#191970] via-[#050510] to-black min-h-screen text-white overflow-x-hidden`}
       >
         <Loader />
         <CornerCurtains />

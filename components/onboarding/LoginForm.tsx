@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { User, Mail, ArrowRight } from 'lucide-react';
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
     const router = useRouter();

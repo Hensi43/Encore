@@ -9,7 +9,7 @@ import Image from 'next/image';
 export default function Hero() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // Dynamic animation delays
-    const [delays, setDelays] = useState({ text: 2.8, gate: 3.6 });
+    const [delays, setDelays] = useState({ text: 2, gate: 2.6 });
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -30,7 +30,7 @@ export default function Hero() {
             scale: 1,
             y: 0,
             transition: {
-                duration: 0.8,
+                duration: 0.6,
                 ease: "easeInOut",
                 delay: delays.text // Wait for curtains (Loader) to start opening (2.5s)
             }
@@ -38,26 +38,26 @@ export default function Hero() {
     };
 
     const leftGateVariant: any = {
-        hidden: { x: '-100%', opacity: 0 },
+        hidden: { x: '40%', opacity: 0 }, // Starts from center (shifted right)
         visible: {
             x: '0%',
             opacity: 1,
             transition: {
-                duration: 0.8,
-                ease: "easeInOut",
-                delay: delays.gate // Starts after text reveal
+                duration: 1.2, // Slower, more majestic opening
+                ease: "easeOut", // starts fast, slows down
+                delay: delays.gate
             }
         }
     };
 
     const rightGateVariant: any = {
-        hidden: { x: '100%', opacity: 0 },
+        hidden: { x: '-40%', opacity: 0 }, // Starts from center (shifted left)
         visible: {
             x: '0%',
             opacity: 1,
             transition: {
-                duration: 0.8,
-                ease: "easeInOut",
+                duration: 1.2,
+                ease: "easeOut",
                 delay: delays.gate
             }
         }
