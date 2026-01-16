@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -14,12 +14,27 @@ export default function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { scrollY } = useScroll();
 
+    const [cartCount, setCartCount] = useState(0);
+
+    const updateCartCount = async () => {
+        try {
+            const res = await fetch('/api/cart');
+            if (res.ok) {
+                const data = await res.json();
+                setCartCount(data.items?.length || 0);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     useEffect(() => {
         // Check initial login status
         const checkLogin = () => {
             if (typeof window !== 'undefined') {
                 const user = localStorage.getItem('encore_user');
                 setIsLoggedIn(!!user);
+                if (user) updateCartCount();
             }
         };
 
@@ -29,10 +44,12 @@ export default function Navbar() {
         window.addEventListener('storage', checkLogin);
         // Custom event for same-tab updates
         window.addEventListener('user-login', checkLogin);
+        window.addEventListener('cart-updated', updateCartCount);
 
         return () => {
             window.removeEventListener('storage', checkLogin);
             window.removeEventListener('user-login', checkLogin);
+            window.removeEventListener('cart-updated', updateCartCount);
         };
     }, []);
 
@@ -97,6 +114,17 @@ export default function Navbar() {
 
                     {/* Right/Login + Logo */}
                     <div className="hidden md:flex items-center space-x-6">
+                        <Link href="/cart" className="relative group">
+                            <div className="p-2 text-white hover:text-gold transition-colors">
+                                <ShoppingCart size={24} />
+                                {cartCount > 0 && (
+                                    <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </div>
+                        </Link>
+
                         {isLoggedIn ? (
                             <Link href="/dashboard">
                                 <Button variant="primary" size="sm">Profile</Button>

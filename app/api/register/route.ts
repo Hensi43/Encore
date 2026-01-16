@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, email, phone, college, year, accommodation, paymentId } = body;
+        const { name, email, phone, college, year, accommodation, paymentId, password, gender, referralCode } = body;
 
         // Basic validation
         if (!name || !email) {
@@ -28,9 +29,9 @@ export async function POST(request: Request) {
 
         // Handle Referral
         let referrerId = null;
-        if (body.referralCode) {
+        if (referralCode) {
             const referrer = await prisma.user.findUnique({
-                where: { referralCode: body.referralCode }
+                where: { referralCode: referralCode }
             });
 
             if (referrer) {
@@ -39,8 +40,14 @@ export async function POST(request: Request) {
                     where: { id: referrer.id },
                     data: { caCoins: { increment: 50 } }
                 });
-                referrerId = body.referralCode; // Store the code, or could store ID
+                referrerId = referralCode;
             }
+        }
+
+        // Hash Password if provided
+        let hashedPassword = null;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password.trim(), 10);
         }
 
         // Create new user
@@ -48,12 +55,20 @@ export async function POST(request: Request) {
             data: {
                 name,
                 email,
+                // @ts-ignore
+                password: hashedPassword,
+                // @ts-ignore
+                gender,
                 phone,
                 college,
                 year,
                 accommodation,
                 paymentId,
-                paymentVerified: !!paymentId, // Verify if payment ID exists
+                // @ts-ignore
+                paymentScreenshot: body.paymentScreenshot,
+                // @ts-ignore
+                totalPaid: body.totalPaid || (accommodation === 'yes' ? 999 : 399),
+                paymentVerified: false, // Always false until Admin approves
                 referredBy: referrerId
             },
         });
@@ -64,8 +79,8 @@ export async function POST(request: Request) {
             exists: false
         }, { status: 201 });
 
-    } catch (error) {
-        console.error('Registration Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (error: any) {
+        console.error('Registration Error Details:', error); // Changed log message
+        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }

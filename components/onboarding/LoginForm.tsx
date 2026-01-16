@@ -1,266 +1,543 @@
+
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { User, Mail, ArrowRight } from 'lucide-react';
-import { signIn } from "next-auth/react";
+import Modal from '@/components/ui/Modal';
+import { User, Mail, Phone, Lock, School, BookOpen, Key, Users } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
     const router = useRouter();
+    const [isLoginMode, setIsLoginMode] = useState(true); // Default to Login
     const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState({ name: '', email: '', accommodation: '' });
+    const [isLoading, setIsLoading] = useState(false);
+    const [modalState, setModalState] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        type: "success" | "error" | "info" | "warning";
+        onAction?: () => void;
+        actionLabel?: string;
+    }>({
+        isOpen: false,
+        title: "",
+        message: "",
+        type: "info"
+    });
 
-    const handleNext = async () => {
-        if (step === 1 && formData.name) {
-            setStep(2);
-        } else if (step === 2 && formData.email) {
-            setStep(3);
-        } else if (step === 4) {
-            try {
-                // Real API Call
-                const res = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ...formData,
-                        paymentId: `PAY-${Date.now()}` // In real flow, this comes from Razorpay response
-                    }),
+    // Registration Data
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        gender: '',
+        phone: '',
+        password: '',
+        confirmPassword: '',
+        referralCode: '',
+        college: '',
+        year: '',
+        course: '',
+        accommodation: ''
+    });
+
+    // Login Data
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (field: string, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleLoginChange = (field: string, value: string) => {
+        setLoginData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // --- Payment State ---
+    const [paymentState, setPaymentState] = useState<{
+        paymentId: string;
+        preview: string | null;
+        file: File | null;
+    }>({
+        paymentId: '',
+        preview: null,
+        file: null
+    });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPaymentState(prev => ({ ...prev, file: file, preview: reader.result as string }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // --- Login Logic ---
+    const handleLogin = async () => {
+        if (!loginData.email || !loginData.password) {
+            setModalState({
+                isOpen: true,
+                title: "Missing Credentials",
+                message: "Please enter both email and password.",
+                type: "warning"
+            });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const res = await signIn('credentials', {
+                redirect: false,
+                email: loginData.email.trim(),
+                password: loginData.password.trim(),
+            });
+
+            if (res?.error) {
+                setModalState({
+                    isOpen: true,
+                    title: "Login Failed",
+                    message: "Invalid email or password.",
+                    type: "error"
                 });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('encore_user', JSON.stringify(data.user));
-                    router.push('/dashboard');
-                } else {
-                    alert('Registration failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Connection error. Please check your network.');
+            } else {
+                // Set localStorage for Dashboard compatibility
+                localStorage.setItem('encore_user', JSON.stringify({ email: loginData.email }));
+                router.push('/dashboard');
             }
+        } catch (error) {
+            setModalState({
+                isOpen: true,
+                title: "Error",
+                message: "Something went wrong. Please try again.",
+                type: "error"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // --- Registration Logic ---
+    const handleNext = () => {
+        if (step === 1) {
+            if (!formData.name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword) {
+                setModalState({
+                    isOpen: true,
+                    title: "Missing Information",
+                    message: "Please fill all required fields marked with *",
+                    type: "warning"
+                });
+                return;
+            }
+            if (formData.password !== formData.confirmPassword) {
+                setModalState({
+                    isOpen: true,
+                    title: "Password Mismatch",
+                    message: "Passwords do not match!",
+                    type: "error"
+                });
+                return;
+            }
+            setStep(2);
+        } else if (step === 2) {
+            if (!formData.college || !formData.year || !formData.accommodation) {
+                setModalState({
+                    isOpen: true,
+                    title: "Missing Information",
+                    message: "Please fill all required fields in this step.",
+                    type: "warning"
+                });
+                return;
+            }
+            setStep(3);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!paymentState.paymentId || !paymentState.preview) {
+            setModalState({
+                isOpen: true,
+                title: "Payment Required",
+                message: "Please provide Transaction ID and Screenshot to complete registration.",
+                type: "warning"
+            });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    email: formData.email.trim(),
+                    password: formData.password.trim(),
+                    confirmPassword: formData.confirmPassword.trim(),
+                    paymentId: paymentState.paymentId.trim(),
+                    paymentScreenshot: paymentState.preview,
+                    totalPaid: formData.accommodation === 'yes' ? 999 : 399
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                if (data.exists) {
+                    setModalState({
+                        isOpen: true,
+                        title: "User Exists",
+                        message: "User already exists! Please login.",
+                        type: "info",
+                        onAction: () => setIsLoginMode(true),
+                        actionLabel: "Login Now"
+                    });
+                } else {
+                    setModalState({
+                        isOpen: true,
+                        title: "Success",
+                        message: "Registration Successful! Please login with your credentials.",
+                        type: "success",
+                        onAction: () => setIsLoginMode(true), // Switch to login after registration
+                        actionLabel: "Login Now"
+                    });
+                    localStorage.setItem('encore_user', JSON.stringify(data.user));
+                }
+            } else {
+                setModalState({
+                    isOpen: true,
+                    title: "Registration Failed",
+                    message: data.error || 'Registration failed.',
+                    type: "error"
+                });
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            setModalState({
+                isOpen: true,
+                title: "Network Error",
+                message: "Connection error. Please check your internet.",
+                type: "error"
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="w-full max-w-md mx-auto p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl">
-            <div className="mb-8 text-center">
-                <h2 className="text-3xl font-cinzel text-gold mb-2">Join the Royalty</h2>
-                <p className="text-gray-400 font-marcellus text-sm">Step into the world of Encore 26</p>
-                {/* Dev Tool */}
-                <button
-                    onClick={() => {
-                        setFormData({
-                            name: `Student ${Math.floor(Math.random() * 100)}`,
-                            email: `student${Math.floor(Math.random() * 1000)}@test.com`,
-                            accommodation: Math.random() > 0.5 ? 'yes' : 'no'
-                        });
-                        // alert("Form Data Filled! Click Next.");
-                    }}
-                    className="text-[10px] text-gray-600 hover:text-gold mt-2 underline"
-                >
-                    (Dev) Auto-Fill Data
-                </button>
+        <div className="w-full max-w-2xl mx-auto p-8 bg-white/5 backdrop-blur-xl border border-gold/20 rounded-3xl shadow-2xl relative overflow-hidden transition-all duration-500">
+
+            {/* Modal Component */}
+            <Modal
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                title={modalState.title}
+                message={modalState.message}
+                type={modalState.type}
+                actionLabel={modalState.actionLabel}
+                onAction={modalState.onAction}
+            />
+
+            {/* Background Decorations */}
+            <div className="absolute -top-20 -right-20 w-60 h-60 bg-gold/10 rounded-full blur-[80px]" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-purple-900/20 rounded-full blur-[80px]" />
+
+            {/* Title / Header */}
+            <div className="relative z-10 text-center mb-8">
+                <h2 className="text-3xl font-cinzel text-gold mb-2">
+                    {isLoginMode ? "Welcome Back" : "Join The Legacy"}
+                </h2>
+                <p className="text-gray-400 font-marcellus text-sm">
+                    {isLoginMode ? "Enter your credentials to access your dashboard" : "Register for Encore 26"}
+                </p>
+            </div>
+
+            {/* Toggle Switch */}
+            <div className="relative z-10 flex justify-center mb-8">
+                <div className="bg-black/40 border border-white/10 p-1 rounded-xl flex">
+                    <button
+                        onClick={() => setIsLoginMode(true)}
+                        className={`px-6 py-2 rounded-lg font-cinzel text-sm transition-all ${isLoginMode ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Login
+                    </button>
+                    <button
+                        onClick={() => setIsLoginMode(false)}
+                        className={`px-6 py-2 rounded-lg font-cinzel text-sm transition-all ${!isLoginMode ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Register
+                    </button>
+                </div>
             </div>
 
             <AnimatePresence mode="wait">
-                {step === 1 && (
+                {isLoginMode ? (
+                    // --- LOGIN FORM ---
                     <motion.div
-                        key="step1"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
+                        key="login"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="space-y-6 relative z-10"
                     >
+                        {/* Email */}
                         <div className="space-y-2">
-                            <label className="text-sm font-marcellus text-gray-300">What shall we call you?</label>
-                            <div className="relative">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gold h-5 w-5" />
+                            <label className="text-sm font-marcellus text-gold/80 ml-1">Email ID</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gold transition-colors h-5 w-5" />
                                 <input
-                                    type="text"
-                                    placeholder="Enter your name"
-                                    className="w-full bg-black/40 border border-white/20 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-colors"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                                    autoFocus
-                                />
-                            </div>
-                        </div>
-
-                        {/* Referral Code */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-marcellus text-gray-300">Referral Code (Optional)</label>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Have a CA Code?"
-                                    className="w-full bg-black/40 border border-white/20 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-gold transition-colors text-sm"
-                                    // @ts-ignore
-                                    value={formData.referralCode || ''}
-                                    // @ts-ignore
-                                    onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                        <Button
-                            onClick={handleNext}
-                            className="w-full"
-                            disabled={!formData.name}
-                        >
-                            Next <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </motion.div>
-                )}
-
-                {step === 2 && (
-                    <motion.div
-                        key="step2"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
-                    >
-                        <div className="space-y-2">
-                            <label className="text-sm font-marcellus text-gray-300">Where shall we send your royal decree?</label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gold h-5 w-5" />
-                                <input
-                                    type="email"
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-gold/50 transition-all font-sans"
                                     placeholder="Enter your email"
-                                    className="w-full bg-black/40 border border-white/20 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-colors"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleNext()}
-                                    autoFocus
+                                    value={loginData.email}
+                                    onChange={(e) => handleLoginChange('email', e.target.value)}
                                 />
                             </div>
                         </div>
-                        <div className="flex gap-4">
-                            <Button variant="ghost" onClick={() => setStep(1)} className="flex-1">Back</Button>
-                            <Button onClick={handleNext} className="flex-1" disabled={!formData.email}>
-                                Next <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                        </div>
-                    </motion.div>
-                )}
 
-                {step === 3 && (
-                    <motion.div
-                        key="step3"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
-                    >
-                        <div className="space-y-2 text-center">
-                            <label className="text-sm font-marcellus text-gray-300">Do you require royal quarters?</label>
-                            <div className="grid grid-cols-2 gap-4 mt-4">
-                                <button
-                                    onClick={() => {
-                                        setFormData({ ...formData, accommodation: 'yes' });
-                                        setStep(4);
-                                    }}
-                                    className="p-4 rounded-xl border border-white/10 hover:border-gold/50 hover:bg-gold/10 transition-all group"
-                                >
-                                    <div className="font-cinzel text-gold text-lg mb-1">Yes</div>
-                                    <div className="text-xs text-gray-400 group-hover:text-gray-300">I need accommodation</div>
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setFormData({ ...formData, accommodation: 'no' });
-                                        setStep(4);
-                                    }}
-                                    className="p-4 rounded-xl border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all group"
-                                >
-                                    <div className="font-cinzel text-white text-lg mb-1">No</div>
-                                    <div className="text-xs text-gray-400 group-hover:text-gray-300">I am a local resident</div>
-                                </button>
+                        {/* Password */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-marcellus text-gold/80 ml-1">Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gold transition-colors h-5 w-5" />
+                                <input
+                                    type="password"
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-white/20 focus:outline-none focus:border-gold/50 transition-all font-sans"
+                                    placeholder="Enter your password"
+                                    value={loginData.password}
+                                    onChange={(e) => handleLoginChange('password', e.target.value)}
+                                />
                             </div>
                         </div>
-                        <div className="flex gap-4">
-                            <Button variant="ghost" onClick={() => setStep(2)} className="flex-1">Back</Button>
-                        </div>
-                    </motion.div>
-                )}
 
-                {step === 4 && (
+                        <Button
+                            onClick={handleLogin}
+                            disabled={isLoading}
+                            className="w-full py-4 text-lg font-cinzel rounded-xl bg-gold text-black hover:bg-white hover:text-black transition-all shadow-lg shadow-gold/10 mt-4"
+                        >
+                            {isLoading ? "Signing In..." : "Sign In"}
+                        </Button>
+
+                    </motion.div>
+                ) : (
+                    // --- REGISTRATION FORM (Stepper) ---
                     <motion.div
-                        key="step4"
-                        initial={{ opacity: 0, x: -20 }}
+                        key="register"
+                        initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="space-y-6"
+                        exit={{ opacity: 0, x: -20 }}
                     >
-                        <div className="space-y-4 text-center">
-                            <label className="text-sm font-marcellus text-gray-300">The Royal Treasury</label>
-                            <p className="text-gray-400 text-sm max-w-xs mx-auto">
-                                To secure your pass, a tribute of <span className="text-gold font-bold">₹{formData.accommodation === 'yes' ? '999' : '399'}</span> is required.
-                            </p>
+                        {/* Stepper Header (Only show in Register mode) */}
+                        <div className="relative z-10 flex justify-center items-center mb-10 gap-4">
+                            <div className="flex flex-col items-center">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all ${step >= 1 ? 'bg-gold text-black' : 'bg-white/10 text-gray-400'}`}>
+                                    1
+                                </div>
+                                <span className={`text-[10px] uppercase tracking-widest ${step >= 1 ? 'text-gold' : 'text-gray-500'}`}>Personal</span>
+                            </div>
+                            <div className={`w-8 h-[1px] mt-[-20px] ${step >= 2 ? 'bg-gold' : 'bg-white/10'}`} />
+                            <div className="flex flex-col items-center">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all ${step >= 2 ? 'bg-gold text-black' : 'bg-white/10 text-gray-400'}`}>
+                                    2
+                                </div>
+                                <span className={`text-[10px] uppercase tracking-widest ${step >= 2 ? 'text-gold' : 'text-gray-500'}`}>College</span>
+                            </div>
+                            <div className={`w-8 h-[1px] mt-[-20px] ${step >= 3 ? 'bg-gold' : 'bg-white/10'}`} />
+                            <div className="flex flex-col items-center">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all ${step >= 3 ? 'bg-gold text-black' : 'bg-white/10 text-gray-400'}`}>
+                                    3
+                                </div>
+                                <span className={`text-[10px] uppercase tracking-widest ${step >= 3 ? 'text-gold' : 'text-gray-500'}`}>Payment</span>
+                            </div>
                         </div>
-                        <div className="flex gap-4">
-                            <Button variant="ghost" onClick={() => setStep(3)} className="flex-1">Back</Button>
-                            <Button
-                                onClick={() => {
-                                    // Load Razorpay Script
-                                    const script = document.createElement('script');
-                                    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-                                    script.onload = () => {
-                                        const amount = formData.accommodation === 'yes' ? 99900 : 39900;
-                                        const options = {
-                                            key: "YOUR_RAZORPAY_KEY_ID_HERE", // Enter the Key ID generated from the Dashboard
-                                            amount: amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                                            currency: "INR",
-                                            name: "Encore 26",
-                                            description: "Festival Pass",
-                                            image: "/images/logo.png",
-                                            handler: function (response: any) {
-                                                // alert(response.razorpay_payment_id);
-                                                handleNext(); // Proceed to complete login
-                                            },
-                                            prefill: {
-                                                name: formData.name,
-                                                email: formData.email,
-                                                contact: "9999999999"
-                                            },
-                                            theme: {
-                                                color: "#FFA500"
-                                            }
-                                        };
-                                        // @ts-ignore
-                                        const rzp1 = new window.Razorpay(options);
-                                        rzp1.open();
-                                    };
-                                    document.body.appendChild(script);
-                                }}
-                                className="flex-1 bg-gold hover:bg-gold/90 text-black font-bold"
-                            >
-                                Pay with Razorpay
-                            </Button>
-                        </div>
-                        {/* Dev Only Bypass */}
-                        <div className="text-center pt-4">
-                            <button
-                                onClick={() => {
-                                    // Submit with dummy payment ID
-                                    console.log("Simulating payment...");
-                                    const dummyEvent = { preventDefault: () => { } };
-                                    // We need to trigger the API call logic.
-                                    // Since handleNext handles the API call when step === 4, we can just call it?
-                                    // But handleNext relies on state. simpler to call the fetch logic directly or mock the state?
-                                    // handleNext() implementation above checks step === 4.
-                                    handleNext();
-                                }}
-                                className="text-xs text-gray-500 hover:text-white underline"
-                                title="Use this to test registration without paying"
-                            >
-                                (Dev Only) Simulate Successful Payment
-                            </button>
-                        </div>
+
+                        {step === 1 && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Name*</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Full Name"
+                                        value={formData.name} onChange={(e) => handleChange('name', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Email*</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Email Address"
+                                        value={formData.email} onChange={(e) => handleChange('email', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Phone*</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Phone Number"
+                                        value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Gender</label>
+                                    <select
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        value={formData.gender} onChange={(e) => handleChange('gender', e.target.value)}
+                                    >
+                                        <option value="">Select Gender</option>
+                                        <option value="Male" className="text-black">Male</option>
+                                        <option value="Female" className="text-black">Female</option>
+                                        <option value="Other" className="text-black">Other</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">CA Code</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Optional"
+                                        value={formData.referralCode} onChange={(e) => handleChange('referralCode', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Password*</label>
+                                    <input type="password"
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Create Password"
+                                        value={formData.password} onChange={(e) => handleChange('password', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Confirm*</label>
+                                    <input type="password"
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="Confirm Password"
+                                        value={formData.confirmPassword} onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="md:col-span-2 mt-4">
+                                    <Button onClick={handleNext} className="w-full py-4 bg-gold text-black font-cinzel rounded-xl hover:bg-white transition-all">
+                                        Next (College Details)
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 2 && (
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">College Name*</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="College Name"
+                                        value={formData.college} onChange={(e) => handleChange('college', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Year*</label>
+                                    <select
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        value={formData.year} onChange={(e) => handleChange('year', e.target.value)}
+                                    >
+                                        <option value="">Select Year</option>
+                                        <option value="1" className="text-black">1st Year</option>
+                                        <option value="2" className="text-black">2nd Year</option>
+                                        <option value="3" className="text-black">3rd Year</option>
+                                        <option value="4" className="text-black">4th Year</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Course</label>
+                                    <input
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                        placeholder="e.g. B.Tech"
+                                        value={formData.course} onChange={(e) => handleChange('course', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs text-gray-400 ml-1">Accommodation*</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button onClick={() => handleChange('accommodation', 'yes')} className={`p-3 rounded-lg border ${formData.accommodation === 'yes' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400'}`}>
+                                            Yes <span className="text-[10px] block text-red-400">(Paid ₹999)</span>
+                                        </button>
+                                        <button onClick={() => handleChange('accommodation', 'no')} className={`p-3 rounded-lg border ${formData.accommodation === 'no' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400'}`}>
+                                            No <span className="text-[10px] block opacity-50">Local (₹399)</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 mt-6">
+                                    <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 border border-white/20">Back</Button>
+                                    <Button onClick={handleNext} className="flex-[2] py-4 bg-gold text-black font-cinzel rounded-xl hover:bg-white transition-all">
+                                        Next (Payment)
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === 3 && (
+                            <div className="grid grid-cols-1 gap-6 text-center">
+                                <div className="bg-white/5 p-6 rounded-xl border border-gold/30">
+                                    <h3 className="text-gold font-cinzel text-xl mb-2">
+                                        Amount to Pay: <span className="text-white text-2xl">₹{formData.accommodation === 'yes' ? '999' : '399'}</span>
+                                    </h3>
+                                    <p className="text-xs text-gray-400 mb-4">Scan the QR code below to pay via UPI</p>
+
+                                    {/* Placeholder QR - Replace with actual image */}
+                                    <div className="w-48 h-48 bg-white mx-auto mb-4 flex items-center justify-center rounded-lg">
+                                        <p className="text-black font-bold text-xs">QR CODE HERE</p>
+                                    </div>
+
+                                    <div className="space-y-4 text-left">
+                                        <div>
+                                            <label className="text-xs text-gray-400 ml-1">Transaction ID (UTR)*</label>
+                                            <input
+                                                className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-gold/50 outline-none"
+                                                placeholder="Enter 12-digit UTR"
+                                                value={paymentState.paymentId}
+                                                onChange={(e) => setPaymentState(prev => ({ ...prev, paymentId: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-gray-400 ml-1">Screenshot*</label>
+                                            <div className="relative border border-dashed border-white/20 rounded-lg p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleFileChange}
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                />
+                                                <div className="flex flex-col items-center justify-center text-gray-400">
+                                                    {paymentState.preview ? (
+                                                        <img src={paymentState.preview} alt="Preview" className="h-32 object-contain" />
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-xs">Click to upload screenshot</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 border border-white/20">Back</Button>
+                                    <Button onClick={handleSubmit} disabled={isLoading} className="flex-[2] py-4 bg-gold text-black font-cinzel rounded-xl hover:bg-white transition-all">
+                                        {isLoading ? 'Verifying...' : 'Complete Registration'}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
                     </motion.div>
                 )}
             </AnimatePresence>
+
         </div>
     );
 }

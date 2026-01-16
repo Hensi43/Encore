@@ -45,6 +45,8 @@ export default function Loader() {
                         autoPlay
                         muted
                         playsInline
+                        webkit-playsinline="true"
+                        controls={false}
                         className="w-full h-full object-cover"
                         onEnded={handleVideoEnded}
                         onTimeUpdate={() => {

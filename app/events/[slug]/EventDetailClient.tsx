@@ -5,12 +5,28 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { eventsData } from '@/lib/data';
 import { Button } from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
+import { useState } from 'react';
 import { ArrowLeft, Clock, MapPin, Calendar, CheckCircle } from 'lucide-react';
 
 export default function EventDetailClient() {
     const params = useParams();
     const router = useRouter();
     const slug = params.slug;
+
+    const [modalState, setModalState] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        type: "success" | "error" | "info" | "warning";
+        actionLabel?: string;
+        onAction?: () => void;
+    }>({
+        isOpen: false,
+        title: "",
+        message: "",
+        type: "info"
+    });
 
     const event = eventsData.find(e => e.slug === slug);
 
@@ -113,17 +129,88 @@ export default function EventDetailClient() {
                             </div>
                         </div>
 
-                        <Button className="w-full py-4 text-lg font-bold mb-3">
-                            Register Now
+
+                        <div className="flex items-center justify-between text-gray-300 lg:text-lg mb-2">
+                            <span>Registration Fee:</span>
+                            <span className="text-gold font-bold text-2xl">₹{event.price || 150}</span>
+                        </div>
+
+                        <Button
+                            className="w-full py-4 text-lg font-bold mb-3"
+                            onClick={async () => {
+                                const btn = document.getElementById('add-to-cart-btn');
+                                if (btn) btn.innerText = "Adding...";
+                                try {
+                                    const res = await fetch('/api/cart', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ eventSlug: event.slug })
+                                    });
+                                    if (res.ok) {
+                                        window.dispatchEvent(new Event('cart-updated'));
+                                        if (btn) btn.innerText = "Added to Cart!";
+                                        setTimeout(() => { if (btn) btn.innerText = "Add to Cart"; }, 2000);
+                                    } else {
+                                        if (res.status === 409) {
+                                            if (btn) btn.innerText = "Already in Cart";
+                                            setModalState({
+                                                isOpen: true,
+                                                title: "Duplicate Item",
+                                                message: "This event is already in your cart.",
+                                                type: "warning"
+                                            });
+                                        } else if (res.status === 401) {
+                                            if (btn) btn.innerText = "Login Required";
+                                            setModalState({
+                                                isOpen: true,
+                                                title: "Login Required",
+                                                message: "You must be logged in to add events to your cart.",
+                                                type: "error",
+                                                actionLabel: "Login Now",
+                                                onAction: () => router.push('/login')
+                                            });
+                                        } else {
+                                            if (btn) btn.innerText = "Failed (" + res.status + ")";
+                                            const data = await res.json();
+                                            console.error(data);
+                                            setModalState({
+                                                isOpen: true,
+                                                title: "Error",
+                                                message: "Failed to add item: " + (data.error || "Unknown error"),
+                                                type: "error"
+                                            });
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.error(e);
+                                    if (btn) btn.innerText = "Error";
+                                }
+                            }}
+                            id="add-to-cart-btn"
+                        >
+                            Add to Cart
                         </Button>
                         <p className="text-xs text-center text-gray-500">
-                            Limited slots available for {event.category}
+                            Instant confirmation • Secure checkout
                         </p>
                     </motion.div>
                 </div>
 
             </div>
 
-        </main>
+
+
+            <Modal
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                title={modalState.title}
+                message={modalState.message}
+                type={modalState.type}
+                actionLabel={modalState.actionLabel}
+                onAction={modalState.onAction}
+            />
+
+        </main >
     );
 }
+
