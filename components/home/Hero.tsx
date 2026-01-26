@@ -74,7 +74,7 @@ export default function Hero() {
                 variants={leftGateVariant}
                 initial="hidden"
                 animate="visible"
-                className="absolute bottom-0 left-0 w-[60vw] h-[50vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
+                className="absolute bottom-0 left-0 w-[60vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
             >
                 <div className="relative w-full h-full">
                     <Image
@@ -92,7 +92,7 @@ export default function Hero() {
                 variants={rightGateVariant}
                 initial="hidden"
                 animate="visible"
-                className="absolute bottom-0 right-0 w-[60vw] h-[50vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
+                className="absolute bottom-0 right-0 w-[60vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
             >
                 <div className="relative w-full h-full">
                     <Image
@@ -122,7 +122,8 @@ export default function Hero() {
                     <span className="absolute -top-4 -right-6 md:-top-8 md:-right-12 text-2xl md:text-4xl text-gold font-script rotate-12">26</span>
                 </h1>
 
-                <h2 className="text-xl md:text-3xl font-cinzel text-gray-400 tracking-[0.2em] mb-12">
+
+                <h2 className="text-xl md:text-3xl font-cinzel text-gray-400 tracking-[0.2em] mb-8 md:mb-12">
                     NAWABI ELEGANCE
                 </h2>
 
@@ -139,6 +140,6 @@ export default function Hero() {
                     </Link>
                 </div>
             </motion.div>
-        </section>
+        </section >
     );
 }

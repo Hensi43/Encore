@@ -279,14 +279,23 @@ export default function AdminPanel() {
                                     <p className="text-xs text-gray-500">{verifyingUser.phone}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">Total Paid (Invested)</p>
-                                    {/* Calculated Total: Registration (if verified) + Paid Orders */}
-                                    <p className="text-4xl font-mono text-gold mb-2">
+                                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">Total Verified</p>
+                                    <p className="text-4xl font-mono text-gold mb-1">
                                         ₹{
                                             (verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
                                             (verifyingUser.orders?.reduce((sum: number, order: any) => order.status === 'PAID' ? sum + order.totalAmount : sum, 0) || 0)
                                         }
                                     </p>
+
+                                    {/* Show Pending if any */}
+                                    {((!verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
+                                        (verifyingUser.orders?.reduce((sum: number, order: any) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0)) > 0 && (
+                                            <p className="text-xs text-red-400 font-mono mb-2">
+                                                + ₹{((!verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
+                                                    (verifyingUser.orders?.reduce((sum: number, order: any) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0))} Pending
+                                            </p>
+                                        )}
+
                                     {verifyingUser.paymentVerified ? (
                                         <span className="text-xs text-green-400 bg-green-900/20 border border-green-500/30 px-3 py-1 rounded uppercase tracking-widest font-bold">Verified</span>
                                     ) : (
@@ -343,6 +352,33 @@ export default function AdminPanel() {
                                         ₹{verifyingUser.orders?.reduce((sum: number, o: any) => o.status === 'PAID' ? sum + o.totalAmount : sum, 0) || 0}
                                     </span>
                                 </div>
+                            </div>
+
+                            {/* 3. Nawabi Coins History */}
+                            <div className="bg-[#151515] p-5 rounded-lg border border-white/10 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-gold" />
+                                <div className="flex justify-between items-center mb-4">
+                                    <h4 className="text-gold font-cinzel text-sm uppercase tracking-wider">Nawabi Coins</h4>
+                                    <span className="text-2xl font-mono text-gold font-bold">{verifyingUser.caCoins || 0}🪙</span>
+                                </div>
+
+                                {(!verifyingUser.coinHistory || verifyingUser.coinHistory.length === 0) ? (
+                                    <p className="text-gray-500 text-sm italic">No coin history found.</p>
+                                ) : (
+                                    <div className="space-y-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                                        {verifyingUser.coinHistory.map((entry: any) => (
+                                            <div key={entry.id} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
+                                                <div>
+                                                    <p className="text-white text-sm font-marcellus">{entry.reason}</p>
+                                                    <p className="text-gray-500 text-[10px]">{new Date(entry.createdAt).toLocaleDateString()} {new Date(entry.createdAt).toLocaleTimeString()}</p>
+                                                </div>
+                                                <span className={`font-mono text-sm ${entry.amount > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                                    {entry.amount > 0 ? '+' : ''}{entry.amount}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Payment Screenshot */}
@@ -623,7 +659,7 @@ export default function AdminPanel() {
                             e.preventDefault();
                             const form = e.target as HTMLFormElement;
                             const formData = new FormData(form);
-                            const payload = Object.fromEntries(formData);
+                            const payload = Object.fromEntries(formData) as { name: string; email: string; phone: string; college: string };
                             try {
                                 const res = await fetch('/api/ca/register', {
                                     method: 'POST',
@@ -643,6 +679,16 @@ export default function AdminPanel() {
                                                     <span className="relative text-gray-400 text-xs uppercase tracking-widest block mb-1">Referral Code</span>
                                                     <strong className="relative text-gold text-4xl font-cinzel tracking-widest drop-shadow-md">{data.code}</strong>
                                                 </div>
+
+                                                <a
+                                                    href={`https://wa.me/${payload.phone}?text=${encodeURIComponent(`Hello ${payload.name}, Congratulations on being selected as a Campus Ambassador for Encore 26! 🌟\n\nYour Referral Code is: *${data.code}*\n\nShare this code to earn rewards! 🚀`)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-full font-bold hover:bg-[#128C7E] transition-colors mt-2"
+                                                >
+                                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.248-.57-.397m-5.475 7.355c-2.43 0-4.814-.582-6.91-1.68l-.497-.263-5.118 1.341 1.366-4.99-.323-.513C.115 13.58 0 11.233 0 8.796 0 3.947 3.946 0 8.795 0c2.35 0 4.561.916 6.223 2.577 1.662 1.661 2.578 3.87 2.578 6.22 0 4.85-3.947 8.794-8.796 8.794" /></svg>
+                                                    Send on WhatsApp
+                                                </a>
                                             </div>
                                         ),
                                         type: "success"
@@ -655,7 +701,7 @@ export default function AdminPanel() {
                                 setModalState({ isOpen: true, title: "Error", message: "Unexpected error occurred", type: "error" });
                             }
                         }}
-                        className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
+                        className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
                     >
                         <div>
                             <label className="block text-xs text-gray-400 mb-1">Name</label>
@@ -664,6 +710,10 @@ export default function AdminPanel() {
                         <div>
                             <label className="block text-xs text-gray-400 mb-1">Email</label>
                             <input name="email" type="email" required className="w-full bg-black/50 border border-white/20 rounded p-2 text-white" />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1">Phone</label>
+                            <input name="phone" required placeholder="91XXXXXXXXXX" className="w-full bg-black/50 border border-white/20 rounded p-2 text-white" />
                         </div>
                         <div>
                             <label className="block text-xs text-gray-400 mb-1">College</label>

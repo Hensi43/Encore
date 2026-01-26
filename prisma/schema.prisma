@@ -47,6 +47,11 @@ model User {
   // New Cart & Order System
   cart            Cart?
   orders          Order[]
+  coinHistory     CoinHistory[]
+  
+  // Team System
+  teams           Team[]    @relation("TeamMembers")
+  ledTeams        Team[]    @relation("TeamLeader")
 }
 
 model Cart {
@@ -80,6 +85,7 @@ model Order {
   paymentId     String?     // External Payment ID (Razorpay etc) or UTR
   paymentScreenshot String? // Base64 or URL of payment proof
   passType      String?     // 'basic' (99) or 'premium' (399) or null
+  securityDeposit Int       @default(0) // Refundable deposit
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -91,4 +97,30 @@ model OrderItem {
   eventSlug String
   eventName String
   price     Int
+}
+
+model CoinHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int      // Positive for earning, Negative for spending
+  reason    String   // e.g. "Instagram Task", "Referral Bonus", "Event Registration"
+  createdAt DateTime @default(now())
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique // 6 character random code
+  eventSlug String
+  
+  leaderId  String
+  leader    User     @relation("TeamLeader", fields: [leaderId], references: [id])
+  
+  members   User[]   @relation("TeamMembers")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventSlug, leaderId]) // User can only lead one team per event
 }

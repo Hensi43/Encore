@@ -38,7 +38,15 @@ export async function POST(request: Request) {
                 // Increment referrer's coin count (e.g., +50 coins)
                 await prisma.user.update({
                     where: { id: referrer.id },
-                    data: { caCoins: { increment: 50 } }
+                    data: {
+                        caCoins: { increment: 50 },
+                        coinHistory: {
+                            create: {
+                                amount: 50,
+                                reason: `Referral Bonus: User Registration`
+                            }
+                        }
+                    }
                 });
                 referrerId = referralCode;
             }

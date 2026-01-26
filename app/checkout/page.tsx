@@ -130,8 +130,9 @@ export default function CheckoutPage() {
     };
 
     const passPrice = (user?.totalPaid > 0) ? 0 : (selectedPass === 'basic' ? 399 : 999);
+    const securityDeposit = (passPrice > 0) ? 200 : 0;
     const itemsTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-    const finalTotal = itemsTotal + passPrice;
+    const finalTotal = itemsTotal + passPrice + securityDeposit;
 
     if (loading) return (
         <div className="min-h-screen bg-black flex items-center justify-center">
@@ -402,6 +403,12 @@ export default function CheckoutPage() {
                                         <span className="text-gray-400">Event Tickets</span>
                                         <span className="text-white font-medium">₹{itemsTotal}</span>
                                     </div>
+                                    {securityDeposit > 0 && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Security Deposit <span className="text-[10px] text-green-400 border border-green-500/30 px-1 rounded ml-1">REFUNDABLE</span></span>
+                                            <span className="text-white font-medium">₹{securityDeposit}</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between text-sm text-green-400">
                                         <span>Platform Fee</span>
                                         <span>FREE</span>

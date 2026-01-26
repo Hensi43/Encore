@@ -116,13 +116,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                         >
                                             <div className="w-16 h-16 relative bg-gray-900 rounded-md overflow-hidden shrink-0">
                                                 <Image
-                                                    src={`/images/event/${[
-                                                        "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
-                                                        "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
-                                                        "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
-                                                        "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
-                                                        "group-dance", "jam"
-                                                    ].indexOf(item.eventSlug) + 1}.jpg`}
+                                                    src={(function () {
+                                                        const slugs = [
+                                                            "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
+                                                            "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
+                                                            "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
+                                                            "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
+                                                            "group-dance", "jam"
+                                                        ];
+                                                        const index = slugs.indexOf(item.eventSlug);
+                                                        if (index === -1) return "/images/logo.png";
+                                                        return `/images/event/${index + 1}.jpg`;
+                                                    })()}
                                                     alt={item.eventName}
                                                     fill
                                                     className="object-cover"

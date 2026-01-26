@@ -27,6 +27,9 @@ export async function GET(request: Request) {
                     include: {
                         items: true
                     }
+                },
+                coinHistory: {
+                    orderBy: { createdAt: 'desc' }
                 }
             } // Include related data
         });

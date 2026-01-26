@@ -56,7 +56,13 @@ export async function POST(request: Request) {
             where: { email },
             data: {
                 [task]: true,
-                caCoins: { increment: REWARD_AMOUNT }
+                caCoins: { increment: REWARD_AMOUNT },
+                coinHistory: {
+                    create: {
+                        amount: REWARD_AMOUNT,
+                        reason: `Completed Task: ${task}`
+                    }
+                }
             }
         });
 

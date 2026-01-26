@@ -31,11 +31,16 @@ export async function POST(req: NextRequest) {
 
     // Add Pass Price (Only if not already paid)
     let passPrice = 0;
+    let securityDeposit = 0;
     if (user.totalPaid === 0) {
         if (passType === 'basic') passPrice = 399;
         if (passType === 'accommodation') passPrice = 999;
+
+        if (passPrice > 0) {
+            securityDeposit = 200;
+        }
     }
-    totalAmount += passPrice;
+    totalAmount += passPrice + securityDeposit;
 
     // Validate Payment Proof for Paid Orders
     if (totalAmount > 0 && (!paymentId || !paymentScreenshot)) {
@@ -51,6 +56,7 @@ export async function POST(req: NextRequest) {
             passType: passType,
             paymentId: paymentId,
             paymentScreenshot: paymentScreenshot,
+            securityDeposit: securityDeposit,
             items: {
                 create: cartItems.map((item) => ({
                     eventSlug: item.eventSlug,

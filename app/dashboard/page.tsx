@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/Button';
 import PassportCard from '@/components/dashboard/PassportCard';
 import ProfileModal from '@/components/dashboard/ProfileModal';
 import Modal from '@/components/ui/Modal';
-import { Calendar, MapPin, Trophy, LogOut, Ticket } from 'lucide-react';
-import LeaderboardWidget from '@/components/dashboard/LeaderboardWidget';
+import TeamManager from '@/components/dashboard/TeamManager';
 
 interface User {
     name: string;
@@ -252,6 +251,9 @@ export default function Dashboard() {
                             <h1 className="text-3xl font-cinzel text-white">Welcome, {user.name.split(' ')[0]}</h1>
                             <p className="text-gray-400 font-marcellus">Here is what is happening at Encore 26</p>
                         </div>
+
+                        {/* Team Manager Widget */}
+                        <TeamManager userEmail={user.email} />
 
                         {/* Nawabi Coins Info Card */}
                         <div className="bg-gradient-to-r from-purple-900/40 to-black p-6 rounded-2xl border border-purple-500/30 relative overflow-hidden">

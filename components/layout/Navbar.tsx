@@ -112,31 +112,38 @@ export default function Navbar() {
                                     {link.name}
                                 </Link>
                             ))}
+
+
+                            {/* Separator */}
+                            <div className="h-4 w-px bg-white/20 mx-2"></div>
+
+                            {/* Cart */}
+                            <button onClick={() => setIsCartOpen(true)} className="relative group">
+                                <div className="p-2 text-white hover:text-gold transition-colors">
+                                    <ShoppingCart size={20} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </div>
+                            </button>
+
+                            {/* Profile/Login */}
+                            {isLoggedIn ? (
+                                <Link href="/dashboard">
+                                    <Button variant="primary" size="sm" className="bg-gold text-black hover:bg-gold/90 text-xs px-4 py-1 h-8">Profile</Button>
+                                </Link>
+                            ) : (
+                                <Link href="/login">
+                                    <Button variant="primary" size="sm" className="bg-gold text-black hover:bg-gold/90 text-xs px-4 py-1 h-8">Login</Button>
+                                </Link>
+                            )}
                         </div>
                     </div>
 
                     {/* Right/Login + Logo */}
                     <div className="hidden md:flex items-center space-x-6">
-                        <button onClick={() => setIsCartOpen(true)} className="relative group">
-                            <div className="p-2 text-white hover:text-gold transition-colors">
-                                <ShoppingCart size={24} />
-                                {cartCount > 0 && (
-                                    <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </div>
-                        </button>
-
-                        {isLoggedIn ? (
-                            <Link href="/dashboard">
-                                <Button variant="primary" size="sm">Profile</Button>
-                            </Link>
-                        ) : (
-                            <Link href="/login">
-                                <Button variant="primary" size="sm">Login</Button>
-                            </Link>
-                        )}
                         <div className="relative h-12 w-32 md:h-16 md:w-48">
                             <Image
                                 src="/images/issacc_new.png"
