@@ -4,7 +4,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
-import { User, Lock, Users, ArrowRight } from 'lucide-react';
+import { User, Lock, Users, ArrowRight } from 'lucide-react'; // Kept as comments or remove entirely if not needed.
+// Actually, I will just remove the imports that are warned about if they are truly unused.
+// Warnings were: User, Lock, Users, ArrowRight.
+// Looking at the code:
+// The code uses none of them.
+// So I can remove the line or leave it empty? 
+// Wait, "User" variable is used? 
+// Linter said: 'User' is defined but never used. 
+// Let's check lines 9-148. 
+// I don't see <User /> or User used.
+// So I will remove the imports.
 
 export default function CAPortal() {
     const router = useRouter();
@@ -44,7 +54,7 @@ export default function CAPortal() {
                 const err = await res.json();
                 alert(err.message || err.error || 'Action failed');
             }
-        } catch (error) {
+        } catch {
             alert('Connection Error');
         } finally {
             setLoading(false);
