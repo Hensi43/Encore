@@ -8,6 +8,8 @@ import PassportCard from '@/components/dashboard/PassportCard';
 import ProfileModal from '@/components/dashboard/ProfileModal';
 import Modal from '@/components/ui/Modal';
 import TeamManager from '@/components/dashboard/TeamManager';
+import LeaderboardWidget from '@/components/dashboard/LeaderboardWidget';
+import { LogOut, Calendar, Trophy, MapPin, Ticket } from 'lucide-react';
 
 interface User {
     name: string;
@@ -132,7 +134,7 @@ export default function Dashboard() {
                 const err = await res.json();
                 setModalState({ isOpen: true, title: "Error", message: err.error || "Claim failed", type: "error" });
             }
-        } catch (e) {
+        } catch {
             setModalState({ isOpen: true, title: "Error", message: "Failed to connect to server", type: "error" });
         }
     };
@@ -143,7 +145,7 @@ export default function Dashboard() {
 
     if (!user) return <div className="min-h-screen bg-black flex items-center justify-center text-gold">Loading...</div>;
 
-    const progress = user.profileCompleted ? 100 : 40;
+
 
     return (
         <main className="min-h-screen bg-black pt-24 px-4 pb-12">
