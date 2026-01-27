@@ -67,7 +67,6 @@ export default function Navbar() {
         { name: 'Home', href: '/' },
         { name: 'Events', href: '/events' },
         { name: 'About', href: '/about' },
-        { name: 'CA Portal', href: '/ca-portal' },
         { name: 'Sponsorship', href: '/sponsorship' },
     ];
 
@@ -113,6 +112,14 @@ export default function Navbar() {
                                 </Link>
                             ))}
 
+
+                            {/* CA Portal - Desktop */}
+                            <Link
+                                href="/ca-portal"
+                                className="hidden lg:block text-xs font-marcellus text-gold hover:text-white transition-colors border border-gold/30 px-3 py-1 rounded-full bg-gold/5 hover:bg-gold/10 mr-2"
+                            >
+                                CA Portal
+                            </Link>
 
                             {/* Separator */}
                             <div className="h-4 w-px bg-white/20 mx-2"></div>
@@ -185,7 +192,15 @@ export default function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                        <div className="pt-4">
+                        <div className="pt-4 border-t border-white/10 mt-2">
+                            <Link
+                                href="/ca-portal"
+                                className="block w-full text-center px-3 py-2 text-sm font-marcellus text-gold hover:text-white border border-gold/30 rounded-full mb-3"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                CA Portal
+                            </Link>
+
                             {isLoggedIn ? (
                                 <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" className="w-full">Profile</Button>

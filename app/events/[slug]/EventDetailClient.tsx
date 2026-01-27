@@ -97,7 +97,7 @@ export default function EventDetailClient() {
                     {/* Description/Quote */}
                     <div className="bg-gradient-to-r from-gold/10 to-transparent p-6 rounded-l-2xl border-l-4 border-gold">
                         <p className="font-marcellus text-lg italic text-gray-200">
-                            "Enthusiastic Shutterbugs, it's your turn to grasp your camera and make your eyes act like a shutter and your mind like a lens."
+                            &quot;Enthusiastic Shutterbugs, it&apos;s your turn to grasp your camera and make your eyes act like a shutter and your mind like a lens.&quot;
                         </p>
                     </div>
                 </div>

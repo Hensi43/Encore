@@ -4,14 +4,60 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
-import { Trash2, Edit2, Save, X } from 'lucide-react';
+import { Trash2, Edit2, X } from 'lucide-react';
+
+interface OrderItem {
+    eventName: string;
+}
+
+interface Order {
+    id: string;
+    createdAt: string;
+    status: string;
+    totalAmount: number;
+    items: OrderItem[];
+}
+
+interface CoinEntry {
+    id: string;
+    reason: string;
+    createdAt: string;
+    amount: number;
+}
+
+interface AdminUser {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    college: string;
+    year: string;
+    accommodation: string;
+    paymentId?: string;
+    paymentVerified: boolean;
+    totalPaid?: number;
+    orders: Order[];
+    caCoins?: number;
+    coinHistory: CoinEntry[];
+    paymentScreenshot?: string;
+    referralCode?: string;
+    referrals?: number;
+}
+
+interface LeaderboardEntry {
+    id: string;
+    name: string;
+    college: string;
+    referralCode: string;
+    referrals: number;
+}
 
 export default function AdminPanel() {
     const [secret, setSecret] = useState('');
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<AdminUser[]>([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [leaderboard, setLeaderboard] = useState<any[]>([]); // Leaderboard Data
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]); // Leaderboard Data
     const [searchQuery, setSearchQuery] = useState('');
 
     // Global Modal State (Success/Error messages)
@@ -31,7 +77,7 @@ export default function AdminPanel() {
 
     // Edit Modal State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<any>(null);
+    const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
     const [editForm, setEditForm] = useState({
         name: '',
         email: '',
@@ -44,7 +90,7 @@ export default function AdminPanel() {
 
     // Verify Modal State
     const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-    const [verifyingUser, setVerifyingUser] = useState<any>(null);
+    const [verifyingUser, setVerifyingUser] = useState<AdminUser | null>(null);
 
     const fetchUsers = async () => {
         try {
@@ -87,14 +133,10 @@ export default function AdminPanel() {
                     }
                 });
         }
-    }, []);
+    }, [isAuthenticated]);
 
     // Auto-Refresh Effect
-    useEffect(() => {
-        if (!isAuthenticated) return;
-        // const interval = setInterval(fetchUsers, 5000); // Poll every 5 seconds
-        // return () => clearInterval(interval);
-    }, [isAuthenticated, secret]);
+
 
     const handleLogin = async () => {
         setLoading(true);
@@ -109,7 +151,7 @@ export default function AdminPanel() {
             } else {
                 setModalState({ isOpen: true, title: "Access Denied", message: "Invalid Admin Secret", type: "error" });
             }
-        } catch (error) {
+        } catch {
             setModalState({ isOpen: true, title: "Error", message: "Error connecting to server", type: "error" });
         } finally {
             setLoading(false);
@@ -120,7 +162,7 @@ export default function AdminPanel() {
 
     // --- Actions ---
 
-    const openVerifyModal = (user: any) => {
+    const openVerifyModal = (user: AdminUser) => {
         setVerifyingUser(user);
         setIsVerifyModalOpen(true);
     };
@@ -144,12 +186,12 @@ export default function AdminPanel() {
             } else {
                 setModalState({ isOpen: true, title: "Error", message: "Failed to verify user", type: "error" });
             }
-        } catch (error) {
+        } catch {
             setModalState({ isOpen: true, title: "Error", message: "Network error", type: "error" });
         }
     };
 
-    const openEditModal = (user: any) => {
+    const openEditModal = (user: AdminUser) => {
         setEditingUser(user);
         setEditForm({
             name: user.name || '',
@@ -164,6 +206,7 @@ export default function AdminPanel() {
     };
 
     const handleUpdateUser = async () => {
+        if (!editingUser) return;
         try {
             const res = await fetch('/api/admin/users', {
                 method: 'PUT',
@@ -211,7 +254,7 @@ export default function AdminPanel() {
             } else {
                 setModalState({ isOpen: true, title: "Error", message: "Failed to delete user", type: "error" });
             }
-        } catch (error) {
+        } catch {
             setModalState({ isOpen: true, title: "Error", message: "Network error", type: "error" });
         }
     };
@@ -283,16 +326,16 @@ export default function AdminPanel() {
                                     <p className="text-4xl font-mono text-gold mb-1">
                                         ₹{
                                             (verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
-                                            (verifyingUser.orders?.reduce((sum: number, order: any) => order.status === 'PAID' ? sum + order.totalAmount : sum, 0) || 0)
+                                            (verifyingUser.orders?.reduce((sum: number, order) => order.status === 'PAID' ? sum + order.totalAmount : sum, 0) || 0)
                                         }
                                     </p>
 
                                     {/* Show Pending if any */}
                                     {((!verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
-                                        (verifyingUser.orders?.reduce((sum: number, order: any) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0)) > 0 && (
+                                        (verifyingUser.orders?.reduce((sum: number, order) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0)) > 0 && (
                                             <p className="text-xs text-red-400 font-mono mb-2">
                                                 + ₹{((!verifyingUser.paymentVerified ? (verifyingUser.totalPaid || (verifyingUser.accommodation === 'yes' ? 999 : 399)) : 0) +
-                                                    (verifyingUser.orders?.reduce((sum: number, order: any) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0))} Pending
+                                                    (verifyingUser.orders?.reduce((sum: number, order) => order.status !== 'PAID' ? sum + order.totalAmount : sum, 0) || 0))} Pending
                                             </p>
                                         )}
 
@@ -326,12 +369,12 @@ export default function AdminPanel() {
                                     <p className="text-gray-500 text-sm italic">No additional event orders.</p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {verifyingUser.orders.map((order: any) => (
+                                        {verifyingUser.orders.map((order) => (
                                             <div key={order.id} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
                                                 <div>
                                                     <p className="text-gray-400 text-xs mb-1">{new Date(order.createdAt).toLocaleDateString()}</p>
                                                     <div className="flex flex-col">
-                                                        {order.items.map((item: any, i: number) => (
+                                                        {order.items.map((item, i) => (
                                                             <span key={i} className="text-white text-sm font-marcellus">{item.eventName}</span>
                                                         ))}
                                                     </div>
@@ -349,7 +392,7 @@ export default function AdminPanel() {
                                 <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
                                     <span className="text-gray-400 text-xs uppercase">Total Orders Value</span>
                                     <span className="text-xl font-mono text-white">
-                                        ₹{verifyingUser.orders?.reduce((sum: number, o: any) => o.status === 'PAID' ? sum + o.totalAmount : sum, 0) || 0}
+                                        ₹{verifyingUser.orders?.reduce((sum: number, o) => o.status === 'PAID' ? sum + o.totalAmount : sum, 0) || 0}
                                     </span>
                                 </div>
                             </div>
@@ -366,7 +409,7 @@ export default function AdminPanel() {
                                     <p className="text-gray-500 text-sm italic">No coin history found.</p>
                                 ) : (
                                     <div className="space-y-3 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                                        {verifyingUser.coinHistory.map((entry: any) => (
+                                        {verifyingUser.coinHistory.map((entry) => (
                                             <div key={entry.id} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
                                                 <div>
                                                     <p className="text-white text-sm font-marcellus">{entry.reason}</p>
@@ -388,13 +431,14 @@ export default function AdminPanel() {
                                     <div className="flex justify-between items-center mb-4">
                                         <h4 className="text-blue-400 font-cinzel text-sm uppercase tracking-wider">Payment Proof</h4>
                                         <button
-                                            onClick={() => setViewingScreenshot(verifyingUser.paymentScreenshot)}
+                                            onClick={() => setViewingScreenshot(verifyingUser.paymentScreenshot || null)}
                                             className="text-xs text-blue-400 hover:text-white underline"
                                         >
                                             View Fullscreen
                                         </button>
                                     </div>
-                                    <div className="relative h-48 w-full rounded-lg overflow-hidden border border-white/10 cursor-pointer" onClick={() => setViewingScreenshot(verifyingUser.paymentScreenshot)}>
+                                    <div className="relative h-48 w-full rounded-lg overflow-hidden border border-white/10 cursor-pointer" onClick={() => setViewingScreenshot(verifyingUser.paymentScreenshot || null)}>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={verifyingUser.paymentScreenshot}
                                             alt="Proof"
@@ -424,6 +468,7 @@ export default function AdminPanel() {
                         <button onClick={() => setViewingScreenshot(null)} className="absolute -top-10 right-0 text-white hover:text-gold transition-colors">
                             <X size={32} />
                         </button>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={viewingScreenshot} alt="Payment Proof" className="w-full h-full object-contain rounded-lg border border-white/20" />
                     </div>
                 </div>
@@ -535,9 +580,7 @@ export default function AdminPanel() {
                                         (user.paymentId?.toLowerCase() || '').includes(query)
                                     );
                                 }).map((user) => {
-                                    const totalPaid = user.orders?.reduce((sum: number, order: any) => {
-                                        return order.status === 'PAID' ? sum + order.totalAmount : sum;
-                                    }, 0) || 0;
+
 
                                     // Registration Fee Logic
                                     const registrationFee = user.totalPaid || (user.accommodation === 'yes' ? 999 : 399);
@@ -584,7 +627,7 @@ export default function AdminPanel() {
 
                                                     {user.paymentScreenshot && (
                                                         <button
-                                                            onClick={() => setViewingScreenshot(user.paymentScreenshot)}
+                                                            onClick={() => setViewingScreenshot(user.paymentScreenshot || null)}
                                                             className="text-[10px] text-blue-400 underline decoration-blue-400/30 hover:text-blue-300 w-fit"
                                                         >
                                                             View Screenshot
@@ -697,7 +740,7 @@ export default function AdminPanel() {
                                 } else {
                                     setModalState({ isOpen: true, title: "Error", message: data.error || 'Failed', type: "error" });
                                 }
-                            } catch (err) {
+                            } catch {
                                 setModalState({ isOpen: true, title: "Error", message: "Unexpected error occurred", type: "error" });
                             }
                         }}

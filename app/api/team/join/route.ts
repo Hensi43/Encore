@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Event data not found' }, { status: 500 });
         }
 
-        // @ts-ignore
+
         const maxMembers = event.maxSize || 5; // Default fallback
 
         if (team.members.length >= maxMembers) {

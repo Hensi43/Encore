@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Instagram, Facebook, Mail, Phone, MapPin, Twitter, Linkedin } from 'lucide-react';
+import { Instagram, Facebook, Mail, MapPin, Linkedin } from 'lucide-react';
 
 export default function Footer() {
     const pathname = usePathname();
@@ -35,7 +35,7 @@ export default function Footer() {
                                 <Facebook size={20} />
                             </a>
                             <a href="https://x.com/iet_encore" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gold transition-colors">
-                                <Twitter size={20} />
+                                <span className="font-bold text-lg">𝕏</span>
                             </a>
                             <a href="https://linkedin.com/company/iet-encore" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gold transition-colors">
                                 <Linkedin size={20} />
@@ -73,12 +73,8 @@ export default function Footer() {
                                 <span>IET Lucknow, Sitapur Road, Lucknow, UP</span>
                             </li>
                             <li className="flex items-center gap-3 text-gray-400">
-                                <Phone size={18} className="text-gold shrink-0" />
-                                <span>+91 9175408641</span>
-                            </li>
-                            <li className="flex items-center gap-3 text-gray-400">
                                 <Mail size={18} className="text-gold shrink-0" />
-                                <span>contact@encore-iet.com</span>
+                                <span>encore@ietlucknow.ac.in</span>
                             </li>
                         </ul>
                     </div>

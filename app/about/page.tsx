@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+
 import { User, Award, Users } from 'lucide-react';
 
 export default function AboutPage() {
@@ -33,7 +33,7 @@ export default function AboutPage() {
             <section className="py-16 px-4">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-cinzel text-white text-center mb-16 relative">
-                        <span className="relative z-10 bg-black px-8">Leadership</span>
+                        <span className="relative z-10 bg-black px-8">Organising Team</span>
                         <div className="absolute top-1/2 left-0 w-full h-px bg-white/10 -z-0" />
                     </h2>
 
@@ -71,7 +71,7 @@ export default function AboutPage() {
                                 </div>
                                 {/* <Image src="/path/to/chairman.jpg" alt="Chairman" fill className="object-cover" /> */}
                             </div>
-                            <h3 className="text-2xl font-cinzel text-gold mb-2">Prof. D.S. Yadav</h3>
+                            <h3 className="text-2xl font-cinzel text-gold mb-2">Dr. SATYENDRA SINGH</h3>
                             <p className="text-purple-400 font-medium tracking-wider text-sm mb-4 uppercase">Chairman, ISSACC</p>
                             <p className="text-gray-400 font-marcellus text-sm leading-relaxed">
                                 Orchestrating the cultural vibrancy of the campus and fostering an environment of creativity and expression.

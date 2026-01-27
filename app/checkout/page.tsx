@@ -3,21 +3,22 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CheckCircle, CreditCard, MapPin, ShieldCheck, ShoppingBag, ChevronDown, ChevronRight, Lock } from "lucide-react";
+import { CheckCircle, ShieldCheck, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function CheckoutPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [cartItems, setCartItems] = useState<any[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [user, setUser] = useState<any>(null);
-    const [paymentMethod, setPaymentMethod] = useState("upi");
     const [placingOrder, setPlacingOrder] = useState(false);
 
     // Steps State
-    const [activeStep, setActiveStep] = useState(1);
+    const [activeStep] = useState(1);
 
     // Payment Verification State
     const [utr, setUtr] = useState("");

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
-import { User, Mail, Phone, Lock, School, BookOpen, Key, Users } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
@@ -74,27 +74,7 @@ export default function LoginForm() {
         setLoginData(prev => ({ ...prev, [field]: value }));
     };
 
-    // --- Payment State ---
-    const [paymentState, setPaymentState] = useState<{
-        paymentId: string;
-        preview: string | null;
-        file: File | null;
-    }>({
-        paymentId: '',
-        preview: null,
-        file: null
-    });
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPaymentState(prev => ({ ...prev, file: file, preview: reader.result as string }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     // --- Login Logic ---
     const handleLogin = async () => {
@@ -129,7 +109,7 @@ export default function LoginForm() {
                 window.dispatchEvent(new Event('user-login'));
                 router.push('/dashboard');
             }
-        } catch (error) {
+        } catch {
             setModalState({
                 isOpen: true,
                 title: "Error",

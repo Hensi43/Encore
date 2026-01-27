@@ -24,7 +24,7 @@ const eventSlugs = [
 const firstNames = ["Aarav", "Vivaan", "Aditya", "Vihaan", "Arjun", "Sai", "Reyansh", "Ayan", "Krishna", "Ishaan", "Shaurya", "Atharv", "Advik", "Pranav", "Advaith", "Aaryan", "Dhruv", "Kabir", "Rudra", "Riyan", "Ananya", "Diya", "Saanvi", "Aadhya", "Pari", "Siya"];
 const lastNames = ["Sharma", "Verma", "Gupta", "Singh", "Yadav", "Mishra", "Tripathi", "Patel", "Reddy", "Nair", "Iyer", "Kumar", "Das", "Pal", "Chopra", "Malhotra", "Kapoor", "Jain", "Agarwal", "Saxena"];
 
-function getRandomElement(arr: any[]) {
+function getRandomElement<T>(arr: T[]): T {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 

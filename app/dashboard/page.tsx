@@ -389,7 +389,15 @@ export default function Dashboard() {
     );
 }
 
-function RewardItem({ title, coins, isClaimed, onClaim, link }: any) {
+interface RewardItemProps {
+    title: string;
+    coins: number;
+    isClaimed: boolean;
+    onClaim: () => void;
+    link?: string;
+}
+
+function RewardItem({ title, coins, isClaimed, onClaim }: RewardItemProps) {
     return (
         <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/10">
             <div>

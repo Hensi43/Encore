@@ -63,18 +63,18 @@ export async function POST(request: Request) {
             data: {
                 name,
                 email,
-                // @ts-ignore
+
                 password: hashedPassword,
-                // @ts-ignore
+
                 gender,
                 phone,
                 college,
                 year,
                 accommodation,
                 paymentId,
-                // @ts-ignore
+
                 paymentScreenshot: body.paymentScreenshot,
-                // @ts-ignore
+
                 totalPaid: body.totalPaid || (accommodation === 'yes' ? 999 : 399),
                 paymentVerified: false, // Always false until Admin approves
                 referredBy: referrerId
@@ -87,8 +87,8 @@ export async function POST(request: Request) {
             exists: false
         }, { status: 201 });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Registration Error Details:', error); // Changed log message
-        return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error', details: (error as Error).message }, { status: 500 });
     }
 }

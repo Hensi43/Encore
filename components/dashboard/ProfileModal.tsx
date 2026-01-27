@@ -9,7 +9,9 @@ import { X, Building, Phone, GraduationCap } from 'lucide-react';
 interface ProfileModalProps {
     isOpen: boolean;
     onClose: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     user: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onUpdate: (updatedUser: any) => void;
 }
 
@@ -55,7 +57,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
             } else {
                 setModalState({ isOpen: true, title: "Update Failed", message: "Could not update profile. Please try again.", type: "error" });
             }
-        } catch (error) {
+        } catch {
             setModalState({ isOpen: true, title: "Network Error", message: "Please check your connection.", type: "error" });
         }
     };
@@ -145,7 +147,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdate }: Profil
                             </div>
 
                             <Button type="submit" className="w-full mt-4">
-                                Save & Earn 50 Coins
+                                Save Profile
                             </Button>
                         </form>
                     </motion.div>

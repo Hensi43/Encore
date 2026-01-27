@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
-import { eventsData } from '@/lib/data';
 import Image from 'next/image';
+import { eventsData } from '@/lib/data';
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
@@ -12,6 +12,7 @@ import CartDrawer from '@/components/cart/CartDrawer';
 export default function EventsPage() {
     const [isCartOpen, setIsCartOpen] = useState(false);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleQuickAdd = async (e: React.MouseEvent, event: any) => {
         e.preventDefault(); // Prevent Link navigation
         try {
@@ -51,7 +52,7 @@ export default function EventsPage() {
                     {[
                         {
                             title: "Dance Club",
-                            events: eventsData.filter(e => ["Dance", "Solo Dance", "Group Dance"].includes(e.category))
+                            events: eventsData.filter(e => ["Dance", "Solo Dance", "Duo Dance", "Group Dance"].includes(e.category))
                         },
                         {
                             title: "Music Club",
@@ -59,11 +60,11 @@ export default function EventsPage() {
                         },
                         {
                             title: "Dramatics Club",
-                            events: eventsData.filter(e => ["Nukkad", "Monoact", "Open Stage", "Mimicry", "JAM"].includes(e.category))
+                            events: eventsData.filter(e => ["Nukkad", "Monoact", "Skit", "Mime", "Open Stage", "Mimicry", "JAM"].includes(e.category))
                         },
                         {
                             title: "Fine Arts Club",
-                            events: eventsData.filter(e => ["Art", "Face Painting", "Live Sketching", "Relay Rangoli", "Picture Story"].includes(e.category))
+                            events: eventsData.filter(e => ["Art", "Face Painting", "Live Sketching", "Relay Rangoli", "Picture Story", "T-Shirt Painting"].includes(e.category))
                         },
                         {
                             title: "Photography & Film Club",

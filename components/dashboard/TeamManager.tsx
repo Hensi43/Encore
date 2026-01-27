@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/Button';
 import { eventsData } from '@/lib/data';
-import { Users, Plus, UserPlus, Copy, Check } from 'lucide-react';
+import { Users, Plus, UserPlus, Copy } from 'lucide-react';
 
 interface Team {
     id: string;
     name: string;
     code: string;
     eventSlug: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     members: any[];
 }
 
@@ -25,7 +26,7 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const fetchTeams = async () => {
+    const fetchTeams = useCallback(async () => {
         try {
             const res = await fetch('/api/user/teams', {
                 method: 'POST',
@@ -41,17 +42,23 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userEmail]);
 
     useEffect(() => {
         if (userEmail) fetchTeams();
-    }, [userEmail]);
+    }, [userEmail, fetchTeams]);
 
     const handleCreateTeam = async () => {
         setError(''); setSuccess('');
         try {
-            // @ts-ignore
-            const userId = JSON.parse(localStorage.getItem('encore_user') || '{}').id;
+
+            const user = JSON.parse(localStorage.getItem('encore_user') || '{}');
+            const userId = user.id;
+
+            if (!userId) {
+                setError('Session expired. Please log in again.');
+                return;
+            }
 
             const res = await fetch('/api/team/create', {
                 method: 'POST',
@@ -67,7 +74,7 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
             } else {
                 setError(data.error);
             }
-        } catch (err) {
+        } catch {
             setError('Failed to create team');
         }
     };
@@ -75,8 +82,14 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
     const handleJoinTeam = async () => {
         setError(''); setSuccess('');
         try {
-            // @ts-ignore
-            const userId = JSON.parse(localStorage.getItem('encore_user') || '{}').id;
+
+            const user = JSON.parse(localStorage.getItem('encore_user') || '{}');
+            const userId = user.id;
+
+            if (!userId) {
+                setError('Session expired. Please log in again.');
+                return;
+            }
 
             const res = await fetch('/api/team/join', {
                 method: 'POST',
@@ -92,13 +105,13 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
             } else {
                 setError(data.error);
             }
-        } catch (err) {
+        } catch {
             setError('Failed to join team');
         }
     };
 
     // Filter events that allow teams
-    // @ts-ignore
+
     const teamEvents = eventsData.filter(e => e.isTeam);
     const availableEvents = teamEvents.filter(e => !teams.find(t => t.eventSlug === e.slug));
 
@@ -130,7 +143,7 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
             {view === 'list' && (
                 <div className="space-y-4">
                     {teams.length === 0 ? (
-                        <p className="text-gray-500 text-sm">You haven't joined any teams yet.</p>
+                        <p className="text-gray-500 text-sm">You haven&apos;t joined any teams yet.</p>
                     ) : (
                         teams.map(team => {
                             const event = eventsData.find(e => e.slug === team.eventSlug);
@@ -175,7 +188,7 @@ export default function TeamManager({ userEmail }: { userEmail: string }) {
                         >
                             <option value="">-- Choose Event --</option>
                             {availableEvents.map(e => (
-                                <option key={e.slug} value={e.slug}>{e.title}</option>
+                                <option key={e.slug} value={e.slug}>{e.title} ({e.category})</option>
                             ))}
                         </select>
                     </div>

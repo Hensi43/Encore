@@ -32,13 +32,13 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("User not found");
                 }
 
-                // @ts-ignore
+
                 if (!user.password) {
                     console.log("Login Failed: User has no password set");
                     throw new Error("Password not set");
                 }
 
-                // @ts-ignore
+
                 const isValid = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isValid) {
@@ -52,16 +52,16 @@ export const authOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async session({ session, token }) {
+        async session({ session }) {
             // Add user ID to session from database
             if (session.user?.email) {
                 const dbUser = await prisma.user.findUnique({
                     where: { email: session.user.email },
                 });
                 if (dbUser) {
-                    // @ts-ignore
+
                     session.user.id = dbUser.id;
-                    // @ts-ignore
+
                     session.user.role = dbUser.role;
                 }
             }

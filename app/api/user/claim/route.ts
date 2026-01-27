@@ -20,8 +20,9 @@ export async function POST(request: Request) {
         }
 
         // Check if already claimed
-        // @ts-ignore
-        if (user[task]) {
+        // Type assertion to allow dynamic key access on known fields
+        const userTyped = user as unknown as Record<string, unknown>;
+        if (userTyped[task]) {
             return NextResponse.json({ error: 'Reward already claimed!' }, { status: 400 });
         }
 

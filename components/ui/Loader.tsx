@@ -18,6 +18,7 @@ export default function Loader() {
         const timer = setTimeout(() => {
             setIsLoading(false);
             if (typeof window !== 'undefined') {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (window as any).hasShownIntro = true;
             }
         }, 8000);
@@ -27,6 +28,7 @@ export default function Loader() {
     const handleVideoEnded = () => {
         setIsLoading(false);
         if (typeof window !== 'undefined') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (window as any).hasShownIntro = true;
         }
     };

@@ -21,7 +21,7 @@ interface CartItem {
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
-    const [loading, setLoading] = useState(false);
+
     const router = useRouter();
 
     // Listen for global cart updates

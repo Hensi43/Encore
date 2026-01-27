@@ -3,7 +3,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
-import { CheckCircle, Clock } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";

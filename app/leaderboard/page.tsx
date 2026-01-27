@@ -7,8 +7,15 @@ import { Trophy, Medal, Award, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
+interface Leader {
+    name: string;
+    referralCode: string;
+    college?: string;
+    referrals: number;
+}
+
 export default function LeaderboardPage() {
-    const [leaders, setLeaders] = useState<any[]>([]);
+    const [leaders, setLeaders] = useState<Leader[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -55,7 +62,7 @@ export default function LeaderboardPage() {
                         className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs uppercase tracking-widest"
                     >
                         <Sparkles size={14} />
-                        <span>Ambassador's Battleground</span>
+                        <span>Ambassador&apos;s Battleground</span>
                     </motion.div>
 
                     <motion.h1

@@ -19,10 +19,20 @@ export async function POST(request: Request) {
 
         if (!currentUser) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+        // Whitelist allowed fields to prevent arbitrary updates (e.g., role, coins)
+        const allowedFields = ['college', 'year', 'phone', 'profileCompleted'];
+        const filteredUpdates: Record<string, string | boolean> = {};
+
+        for (const key of allowedFields) {
+            if (key in updates) {
+                filteredUpdates[key] = updates[key];
+            }
+        }
+
         const updatedUser = await prisma.user.update({
             where: { email },
             data: {
-                ...updates,
+                ...filteredUpdates,
                 // No coins awarded for profile completion anymore
             }
         });

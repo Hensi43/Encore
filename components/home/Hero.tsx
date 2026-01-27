@@ -1,28 +1,31 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Hero() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // Dynamic animation delays
-    const [delays, setDelays] = useState({ text: 2, gate: 2.6 });
-
-    useEffect(() => {
+    const [isLoggedIn] = useState(() => {
         if (typeof window !== 'undefined') {
-            setIsLoggedIn(!!localStorage.getItem('encore_user'));
-
-            // Check if we've already shown the intro in this session
-            if ((window as any).hasShownIntro) {
-                setDelays({ text: 0.3, gate: 0.6 });
-            }
+            return !!localStorage.getItem('encore_user');
         }
-    }, []);
+        return false;
+    });
+    // Dynamic animation delays
+    const [delays] = useState(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (typeof window !== 'undefined' && (window as any).hasShownIntro) {
+            return { text: 0.3, gate: 0.6 };
+        }
+        return { text: 2, gate: 2.6 };
+    });
+
+    // Removed useEffect for delays/auth as they are now lazy initialized
 
     // Animation Variants
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const textVariant: any = {
         hidden: { opacity: 0, scale: 0.9, y: 20 },
         visible: {
@@ -37,6 +40,7 @@ export default function Hero() {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const leftGateVariant: any = {
         hidden: { x: '40%', opacity: 0 }, // Starts from center (shifted right)
         visible: {
@@ -50,6 +54,7 @@ export default function Hero() {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rightGateVariant: any = {
         hidden: { x: '-40%', opacity: 0 }, // Starts from center (shifted left)
         visible: {
@@ -74,7 +79,7 @@ export default function Hero() {
                 variants={leftGateVariant}
                 initial="hidden"
                 animate="visible"
-                className="absolute bottom-0 left-0 w-[60vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
+                className="absolute bottom-0 left-0 w-[50vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
             >
                 <div className="relative w-full h-full">
                     <Image
@@ -92,7 +97,7 @@ export default function Hero() {
                 variants={rightGateVariant}
                 initial="hidden"
                 animate="visible"
-                className="absolute bottom-0 right-0 w-[60vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
+                className="absolute bottom-0 right-0 w-[50vw] h-[35vh] md:w-[35vw] md:h-[65vh] z-10 pointer-events-none"
             >
                 <div className="relative w-full h-full">
                     <Image

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const secret = searchParams.get('secret');
-        const envSecret = process.env.ADMIN_SECRET || 'encore_admin_2026'; // Fallback for testing
+        const envSecret = process.env.ADMIN_SECRET || 'hensi43'; // Fallback for testing
 
         // Simple security check
         if (secret !== envSecret) {
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json({ users }, { status: 200 });
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
@@ -45,12 +45,13 @@ export async function PUT(request: Request) {
     try {
         const body = await request.json();
         const { secret, userId, password, ...updates } = body;
-        const envSecret = process.env.ADMIN_SECRET || 'encore_admin_2026';
+        const envSecret = process.env.ADMIN_SECRET || 'hensi43';
 
         if (secret !== envSecret) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data: any = { ...updates };
 
         // Handle Password Reset
@@ -78,7 +79,7 @@ export async function DELETE(request: Request) {
         const { searchParams } = new URL(request.url);
         const secret = searchParams.get('secret');
         const userId = searchParams.get('userId');
-        const envSecret = process.env.ADMIN_SECRET || 'encore_admin_2026';
+        const envSecret = process.env.ADMIN_SECRET || 'hensi43';
 
         if (secret !== envSecret) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
