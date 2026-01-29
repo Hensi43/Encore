@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
+import Particles from '@/components/ui/Particles';
 
 export default function Hero() {
     const [isLoggedIn] = useState(() => {

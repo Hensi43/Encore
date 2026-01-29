@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Marcellus } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import RoyalFooter from "@/components/layout/RoyalFooter";
 import Loader from "@/components/ui/Loader";
 import CornerCurtains from "@/components/ui/CornerCurtains";
 import "./globals.css";
@@ -56,7 +56,7 @@ export default function RootLayout({
         <CornerCurtains />
         <Navbar />
         {children}
-        <Footer />
+        <RoyalFooter />
       </body>
     </html>
   );
