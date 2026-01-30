@@ -51,40 +51,48 @@ export default function EventsPage() {
                 <div className="space-y-16">
                     {[
                         {
+                            id: "dance",
                             title: "Dance Club",
                             events: eventsData.filter(e => ["Dance (Solo)", "Dance (Duo)", "Dance (Group)", "Dance"].includes(e.category))
                         },
                         {
+                            id: "music",
                             title: "Music Club",
                             events: eventsData.filter(e => ["Singing (Solo)", "Singing (Group)"].includes(e.category))
                         },
                         {
+                            id: "dramatics",
                             title: "Dramatics Club",
                             events: eventsData.filter(e => ["Dramatics (Group)", "Dramatics (Solo)", "Dramatics (Group/ Solo)", "Dramatics"].includes(e.category))
                         },
                         {
+                            id: "fine-arts",
                             title: "Fine Arts Club",
                             events: eventsData.filter(e => ["Art and Craft", "Art"].includes(e.category))
                         },
                         {
+                            id: "photography",
                             title: "Photography & Film Club",
                             events: eventsData.filter(e => ["Mirage (Solo)", "Mirage (Group)"].includes(e.category))
                         },
                         {
+                            id: "literary",
                             title: "Literary Club",
                             events: eventsData.filter(e => ["Literary (Solo)", "Literary (Individual / pair)", "Literary (Group)", "Literary (Solo/ Group)"].includes(e.category))
                         },
                         {
+                            id: "business",
                             title: "Business & Management",
                             events: eventsData.filter(e => ["E-cell (Group)", "Business", "MUN"].includes(e.category))
                         },
                         {
+                            id: "special",
                             title: "Special Events",
                             events: eventsData.filter(e => ["Fun", "Pageant"].includes(e.category))
                         }
                     ].map((section, idx) => (
                         section.events.length > 0 && (
-                            <div key={idx} className="relative">
+                            <div key={idx} id={section.id} className="relative scroll-mt-32">
                                 <h2 className="text-3xl font-cinzel text-white mb-8 border-l-4 border-gold pl-4">
                                     {section.title}
                                 </h2>
@@ -101,7 +109,7 @@ export default function EventsPage() {
                                                 {/* Image Container - Portrait Aspect Ratio */}
                                                 <div className="relative aspect-[4/5] w-full overflow-hidden">
                                                     <Image
-                                                        src={event.image}
+                                                        src={event.image || '/images/defaults/event-placeholder.jpg'}
                                                         alt={event.title}
                                                         fill
                                                         className="object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform"

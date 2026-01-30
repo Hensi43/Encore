@@ -12,25 +12,25 @@ export default function EventsPreview() {
             name: "Dance",
             description: "Rhythm of Royalty",
             image: "/images/categories/dance.png",
-            link: "/events?cat=dance"
+            link: "/events#dance"
         },
         {
             name: "Music",
             description: "Melodies of the Court",
             image: "/images/categories/music.png",
-            link: "/events?cat=music"
+            link: "/events#music"
         },
         {
             name: "Dramatics",
             description: "Tales of Tradition",
             image: "/images/categories/drama.png",
-            link: "/events?cat=dramatics"
+            link: "/events#dramatics"
         },
         {
             name: "Literary",
             description: "Words of Wisdom",
             image: "/images/categories/literary.png",
-            link: "/events?cat=literary"
+            link: "/events#literary"
         }
     ];
 
