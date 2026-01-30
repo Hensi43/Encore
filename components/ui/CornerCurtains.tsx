@@ -11,18 +11,8 @@ export default function CornerCurtains() {
 
     useEffect(() => {
         const handleScroll = () => {
-            const triggerSection = document.getElementById('pure-energy-trigger');
-            if (triggerSection) {
-                const rect = triggerSection.getBoundingClientRect();
-                const triggerPoint = window.innerHeight * 0.3; // Top 30% of viewport
-
-                // If section is below the trigger point, curtains should be DOWN (true)
-                // If section moves UP past the trigger point, curtains roll UP (false)
-                const shouldBeDown = rect.top > triggerPoint;
-
-                // Only update state if it changes to avoid re-renders
-                setIsCurtainDown(shouldBeDown);
-            }
+            const scrollY = window.scrollY;
+            setIsCurtainDown(scrollY < 20); // Down if at top (<20px)
         };
 
         // Initial check
@@ -32,8 +22,8 @@ export default function CornerCurtains() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Only show on Home Page
-    if (pathname !== '/') return null;
+    // Show on all pages EXCEPT admin and dashboard
+    if (pathname.startsWith('/admin') || pathname.startsWith('/dashboard')) return null;
 
     return (
         <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[1] overflow-hidden">

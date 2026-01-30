@@ -64,7 +64,7 @@ export default function RootLayout({
 
         <Loader />
         <Navbar />
-        <main className="relative pt-36">
+        <main className="relative pt-24">
           {children}
         </main>
         <RoyalFooter />
