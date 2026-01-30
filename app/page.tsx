@@ -11,7 +11,7 @@ import FAQ from '@/components/home/FAQ';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black overflow-hidden">
+    <main className="min-h-screen bg-black overflow-hidden">
       <Hero />
       <FestHighlights />
       <div className="relative z-10">
@@ -23,6 +23,6 @@ export default function Home() {
         <SponsorsPreview />
         <FAQ />
       </div>
-    </div>
+    </main>
   );
 }

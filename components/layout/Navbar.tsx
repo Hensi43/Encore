@@ -82,14 +82,10 @@ export default function Navbar() {
                 <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
                 {/* Main Container - Floating Pill */}
-                <div className={`relative w-full px-6 py-3 rounded-full transition-all duration-300 ${pathname === '/'
-                        ? 'bg-transparent border-transparent shadow-none'
-                        : 'bg-[#050505] border border-[#D4AF37]/20 shadow-[0_0_20px_rgba(0,0,0,0.9)]'
-                    }`}>
+                <div className="relative w-full bg-[#050505] border border-[#D4AF37]/20 shadow-[0_0_20px_rgba(0,0,0,0.9)] px-6 py-3 rounded-full">
 
                     {/* Inner Gold Frame Border */}
-                    <div className={`absolute inset-1 rounded-full border pointer-events-none ${pathname === '/' ? 'border-transparent' : 'border-[#D4AF37]/10'
-                        }`} />
+                    <div className="absolute inset-1 rounded-full border border-[#D4AF37]/10 pointer-events-none" />
 
                     <div className="flex items-center justify-between relative z-10 w-full">
 

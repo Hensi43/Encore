@@ -7,7 +7,7 @@ import Particles from "@/components/ui/Particles";
 import CinematicBackground from "@/components/ui/CinematicBackground";
 import CinematicLightingOverlay from "@/components/ui/CinematicLightingOverlay";
 import CornerCurtains from "@/components/ui/CornerCurtains";
-import PageWrapper from "@/components/layout/PageWrapper";
+import MainWrapper from "@/components/layout/MainWrapper";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -65,9 +65,9 @@ export default function RootLayout({
 
         <Loader />
         <Navbar />
-        <PageWrapper>
+        <MainWrapper>
           {children}
-        </PageWrapper>
+        </MainWrapper>
         <RoyalFooter />
       </body>
     </html>
