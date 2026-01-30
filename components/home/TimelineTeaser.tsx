@@ -5,8 +5,8 @@ import { useRef, useState, useEffect } from 'react';
 
 export default function TimelineTeaser() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const firstNodeRef = useRef<HTMLHTMLDivElement>(null);
-    const lastNodeRef = useRef<HTMLHTMLDivElement>(null);
+    const firstNodeRef = useRef<HTMLDivElement>(null);
+    const lastNodeRef = useRef<HTMLDivElement>(null);
     const [lineStyle, setLineStyle] = useState({ top: 0, height: 0 });
 
     // Measure positions to align the line exactly center-to-center
