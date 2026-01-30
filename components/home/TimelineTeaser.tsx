@@ -129,8 +129,8 @@ export default function TimelineTeaser() {
                 {events.map((event, index) => (
                     <motion.div
                         key={index}
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, x: event.align === 'left' ? -50 : 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: index * 0.2 }}
                         viewport={{ once: true, margin: "-100px" }}
                         className={`relative flex flex-col md:flex-row items-center w-full ${event.align === 'right' ? 'md:flex-row-reverse' : ''}`}
