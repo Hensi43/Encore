@@ -362,17 +362,7 @@ export const eventsData = [
         minSize: 2,
         maxSize: 3
     },
-    {
-        title: "Open Stage Poetry",
-        slug: "poetry",
-        category: "Literary (Solo)",
-        price: 100,
-        image: "/images/event/poetry.png",
-        description: "Express with verses.",
-        venue: "Auditorium",
-        time: "TBA",
-        rules: []
-    },
+
     {
         title: "Tasveeron Kee Dastan",
         slug: "picture-story",

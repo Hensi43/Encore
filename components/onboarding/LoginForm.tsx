@@ -443,11 +443,17 @@ export default function LoginForm() {
                                 <div className="space-y-2">
                                     <label className="text-xs text-gray-400 ml-1">Accommodation*</label>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <button type="button" onClick={() => handleChange('accommodation', 'yes')} className={`p-3 rounded-lg border ${formData.accommodation === 'yes' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400'}`}>
-                                            Yes <span className="text-[10px] block text-red-400">(Paid ₹999)</span>
+                                        <button type="button" onClick={() => handleChange('accommodation', 'yes')} className={`p-4 rounded-lg border transition-all ${formData.accommodation === 'yes' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}>
+                                            <div className="flex flex-col items-center">
+                                                <span className="font-marcellus text-lg mb-1">Yes</span>
+                                                <span className="text-sm font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">PAID ₹999</span>
+                                            </div>
                                         </button>
-                                        <button type="button" onClick={() => handleChange('accommodation', 'no')} className={`p-3 rounded-lg border ${formData.accommodation === 'no' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400'}`}>
-                                            No <span className="text-[10px] block opacity-50">Local (₹399)</span>
+                                        <button type="button" onClick={() => handleChange('accommodation', 'no')} className={`p-4 rounded-lg border transition-all ${formData.accommodation === 'no' ? 'bg-gold/20 border-gold text-white' : 'border-white/10 text-gray-400 hover:border-white/30'}`}>
+                                            <div className="flex flex-col items-center">
+                                                <span className="font-marcellus text-lg mb-1">No</span>
+                                                <span className="text-sm font-bold text-gray-300 bg-white/10 px-2 py-0.5 rounded border border-white/10">LOCAL ₹399</span>
+                                            </div>
                                         </button>
                                     </div>
                                 </div>

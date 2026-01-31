@@ -93,10 +93,10 @@ export default function Dashboard() {
         if (!user) return;
 
         // Open link first (mocking the action)
-        if (task === 'taskInsta') window.open('https://instagram.com/encore_iet', '_blank');
+        if (task === 'taskInsta') window.open('https://www.instagram.com/encore.iet?igsh=djgwcXEwOTluYm44', '_blank');
         if (task === 'taskLinkedIn') window.open('https://linkedin.com/company/iet-encore', '_blank');
-        if (task === 'taskX') window.open('https://x.com/iet_encore', '_blank');
-        if (task === 'taskFacebook') window.open('https://facebook.com/iet_encore', '_blank');
+        if (task === 'taskX') window.open('https://youtube.com/@encore_iet?si=G0KNFpQSFo7CkRqc', '_blank'); // Mapped to YouTube
+        if (task === 'taskFacebook') window.open('https://www.facebook.com/people/Encore-Cultural-Fest-of-IET-Lucknow/61586614022230/?rdid=OCHbTbSIvEOrbszq&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1L4xyzBFke%2F%3Fref%3D1', '_blank');
 
         // Delay to simulate "checking" - Use Modal for Confirmation
         setTimeout(() => {
@@ -296,7 +296,7 @@ export default function Dashboard() {
                                     coins={50}
                                     isClaimed={!!user.taskInsta}
                                     onClaim={() => handleClaim('taskInsta')}
-                                    link="https://instagram.com/encore_iet"
+                                    link="https://www.instagram.com/encore.iet?igsh=djgwcXEwOTluYm44"
                                 />
                                 <RewardItem
                                     title="Connect on LinkedIn"
@@ -306,18 +306,18 @@ export default function Dashboard() {
                                     link="https://linkedin.com/company/iet-encore"
                                 />
                                 <RewardItem
-                                    title="Follow on X"
+                                    title="Subscribe on YouTube"
                                     coins={50}
-                                    isClaimed={!!user.taskX}
+                                    isClaimed={!!user.taskX} // Reusing taskX field to avoid DB schema change for now, technically "taskX" now maps to YouTube
                                     onClaim={() => handleClaim('taskX')}
-                                    link="https://x.com/iet_encore"
+                                    link="https://youtube.com/@encore_iet?si=G0KNFpQSFo7CkRqc"
                                 />
                                 <RewardItem
                                     title="Follow on Facebook"
                                     coins={50}
                                     isClaimed={!!user.taskFacebook}
                                     onClaim={() => handleClaim('taskFacebook')}
-                                    link="https://facebook.com/iet_encore"
+                                    link="https://www.facebook.com/people/Encore-Cultural-Fest-of-IET-Lucknow/61586614022230/?rdid=OCHbTbSIvEOrbszq&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1L4xyzBFke%2F%3Fref%3D1"
                                 />
                             </div>
                         </div>

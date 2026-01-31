@@ -26,16 +26,26 @@ export default function AboutPage() {
         {
             id: 2,
             name: "Pratham Sahani",
-            role: "Media Head",
+            role: "Media & Production Head",
             image: "/images/team/media_head.jpg",
             isHighlight: true,
             socials: {
                 instagram: "https://www.instagram.com/pratham_77_?igsh=OWRwZGw5enc1cHRz&utm_source=qr"
             }
         },
-        // 5 Placeholders
         {
             id: 3,
+            name: "Arpit Sinha",
+            role: "Operations Head",
+            image: "/images/team/arpit_sinha.jpg",
+            isHighlight: true,
+            socials: {
+                instagram: "https://www.instagram.com/_.arpit_22?igsh=ejNkM2FyNnlqMXFz&utm_source=qr",
+                linkedin: "https://linkedin.com"
+            }
+        },
+        {
+            id: 4,
             name: "Hensi Baghel",
             role: "Tech Head",
             image: "/images/team/hensi_baghel.jpg",
@@ -46,24 +56,13 @@ export default function AboutPage() {
             }
         },
         {
-            id: 4,
+            id: 5,
             name: "Aryan Sinha",
             role: "PR Head",
             image: "/images/team/aryan_sinha.jpg",
             isHighlight: true,
             socials: {
                 instagram: "https://www.instagram.com/aryan.sinha._?igsh=MTczejV5M2lkc3p6bA==",
-                linkedin: "https://linkedin.com"
-            }
-        },
-        {
-            id: 5,
-            name: "Arpit Sinha",
-            role: "Operations Head",
-            image: "/images/team/arpit_sinha.jpg",
-            isHighlight: true,
-            socials: {
-                instagram: "https://www.instagram.com/_.arpit_22?igsh=ejNkM2FyNnlqMXFz&utm_source=qr",
                 linkedin: "https://linkedin.com"
             }
         },
@@ -83,7 +82,7 @@ export default function AboutPage() {
     return (
         <div className="min-h-screen bg-black pt-20 pb-20">
             {/* 1. Hero Section */}
-            <section className="relative py-20 px-4 mb-12">
+            <section className="relative pt-20 pb-4 px-8 mb-10">
                 <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-transparent pointer-events-none" />
                 <div className="max-w-7xl mx-auto text-center relative z-10">
                     <motion.h1
@@ -99,13 +98,13 @@ export default function AboutPage() {
                         transition={{ delay: 0.2 }}
                         className="text-xl text-gray-400 font-marcellus max-w-2xl mx-auto"
                     >
-                        The pillars behind the legacy of Encore.
+                        Meet the visionaries and dedicated souls who breathe life into Encore. From tireless planning to seamless execution, these are the pillars ensuring the legacy of creativity, culture, and elegance continues to thrive.
                     </motion.p>
                 </div>
             </section>
 
             {/* 2. Faculties Section (Top) */}
-            <section className="py-16 px-4 relative z-10">
+            <section className="pt-0 pb-16 px-4 relative z-10">
                 <div className="max-w-5xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -116,7 +115,7 @@ export default function AboutPage() {
                     >
                         <div className="h-[1px] w-24 md:w-32 bg-gradient-to-l from-[#D4AF37]/60 to-transparent" />
                         <h2 className="text-3xl md:text-5xl font-cinzel text-[#E8E1CF] tracking-[0.05em] capitalize">
-                            Faculties
+                            Our Guides
                         </h2>
                         <div className="h-[1px] w-24 md:w-32 bg-gradient-to-r from-[#D4AF37]/60 to-transparent" />
                     </motion.div>
@@ -184,7 +183,7 @@ export default function AboutPage() {
                                 <div className="absolute inset-[-6px] rounded-full border border-[#D4AF37]/20 group-hover:border-[#D4AF37]/40 group-hover:scale-105 transition-all duration-500" />
                                 <div className="absolute inset-0 rounded-full border-2 border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.3)] overflow-hidden">
                                     <Image
-                                        src="/images/team/dr_satyendra_singh.png"
+                                        src="/images/team/dr_satyendra_singh_new.jpg"
                                         alt="Dr. Satyendra Singh"
                                         fill
                                         className="object-cover transition-transform duration-700 group-hover:scale-110"

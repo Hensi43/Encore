@@ -67,7 +67,7 @@ export default function RoyalFooter() {
                     {/* Socials & Newsletter */}
                     <div>
                         <h3 className="text-lg font-cinzel text-gold mb-6 relative inline-block">
-                            Follow Us
+                            Connect with Us
                             <span className="absolute -bottom-2 left-0 w-1/2 h-[1px] bg-gold/50" />
                         </h3>
                         <div className="flex space-x-4 mb-8">
@@ -76,9 +76,6 @@ export default function RoyalFooter() {
                             </a>
                             <a href="#" className="w-10 h-10 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all duration-300">
                                 <Facebook size={18} />
-                            </a>
-                            <a href="#" className="w-10 h-10 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all duration-300">
-                                <Twitter size={18} />
                             </a>
                             <a href="#" className="w-10 h-10 rounded-full border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-black transition-all duration-300">
                                 <Youtube size={18} />
