@@ -46,6 +46,7 @@ async function main() {
             where: { email },
             update: { password: hashedPassword },
             create: {
+                id: Math.floor(100000 + Math.random() * 900000).toString(),
                 name: `${name} (CA)`,
                 email,
                 password: hashedPassword,
@@ -84,6 +85,7 @@ async function main() {
             where: { email },
             update: { password: hashedPassword },
             create: {
+                id: Math.floor(100000 + Math.random() * 900000).toString(),
                 name,
                 email,
                 password: hashedPassword,
