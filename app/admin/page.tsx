@@ -18,6 +18,8 @@ interface Order {
     totalAmount: number;
     items: OrderItem[];
     passType?: string; // Added to interface
+    paymentId?: string;
+    paymentScreenshot?: string;
 }
 
 interface CoinEntry {
@@ -208,6 +210,35 @@ export default function AdminPanel() {
         }
     };
 
+    const handleVerifyOrder = async (orderId: string) => {
+        try {
+            const res = await fetch('/api/admin/orders', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    secret,
+                    orderId,
+                    status: 'PAID'
+                })
+            });
+
+            if (res.ok) {
+                setModalState({ isOpen: true, title: "Success", message: "Order marked as PAID!", type: "success" });
+                // Refresh data
+                fetchUsers();
+                // Optionally close modal or refresh local state if needed, but fetchUsers refreshes the list.
+                // We might need to refresh the 'verifyingUser' state too if we want immediate feedback in the open modal.
+                // Refetch specific user to update modal?
+                // For simplicity, close modal.
+                setIsVerifyModalOpen(false);
+            } else {
+                setModalState({ isOpen: true, title: "Error", message: "Failed to update order", type: "error" });
+            }
+        } catch {
+            setModalState({ isOpen: true, title: "Error", message: "Network error", type: "error" });
+        }
+    };
+
     const openEditModal = (user: AdminUser) => {
         setEditingUser(user);
         setEditForm({
@@ -392,20 +423,45 @@ export default function AdminPanel() {
                                 ) : (
                                     <div className="space-y-3">
                                         {verifyingUser.orders.map((order) => (
-                                            <div key={order.id} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                                                <div>
-                                                    <p className="text-gray-400 text-xs mb-1">{new Date(order.createdAt).toLocaleDateString()}</p>
-                                                    <div className="flex flex-col">
-                                                        {order.items.map((item, i) => (
-                                                            <span key={i} className="text-white text-sm font-marcellus">{item.eventName}</span>
-                                                        ))}
+                                            <div key={order.id} className="flex flex-col gap-2 border-b border-white/5 pb-4 last:border-0 last:pb-0 bg-black/20 p-3 rounded">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <p className="text-gray-400 text-xs mb-1">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                                        <div className="flex flex-col mb-1">
+                                                            {order.items.map((item, i) => (
+                                                                <span key={i} className="text-white text-sm font-marcellus">• {item.eventName}</span>
+                                                            ))}
+                                                            {order.passType && <span className="text-gold text-sm font-bold">• {order.passType.toUpperCase()} PASS</span>}
+                                                        </div>
+                                                        {order.paymentId && <p className="text-xs text-gray-500 font-mono">UTR: {order.paymentId}</p>}
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className={order.status === 'PAID' ? 'text-green-500 text-xs font-bold mb-1' : 'text-yellow-500 text-xs font-bold mb-1'}>
+                                                            {order.status}
+                                                        </p>
+                                                        <p className="text-lg font-mono text-white">₹{order.totalAmount}</p>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className={order.status === 'PAID' ? 'text-green-500 text-xs font-bold mb-1' : 'text-yellow-500 text-xs font-bold mb-1'}>
-                                                        {order.status}
-                                                    </p>
-                                                    <p className="text-lg font-mono text-white">₹{order.totalAmount}</p>
+
+                                                <div className="flex justify-between items-center mt-2 border-t border-white/5 pt-2">
+                                                    <div>
+                                                        {order.paymentScreenshot && (
+                                                            <button
+                                                                onClick={() => setViewingScreenshot(order.paymentScreenshot || null)}
+                                                                className="text-[10px] text-blue-400 underline flex items-center gap-1"
+                                                            >
+                                                                View Proof
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    {order.status !== 'PAID' && (
+                                                        <Button
+                                                            onClick={() => handleVerifyOrder(order.id)}
+                                                            className="h-7 text-[10px] bg-green-600 hover:bg-green-700 px-3 py-0"
+                                                        >
+                                                            Mark PAID
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}

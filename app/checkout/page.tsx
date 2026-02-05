@@ -142,7 +142,7 @@ export default function CheckoutPage() {
         </div>
     );
 
-    const PAYMENTS_ENABLED = false;
+    const PAYMENTS_ENABLED = true;
 
     if (!PAYMENTS_ENABLED) {
         return (
@@ -355,11 +355,36 @@ export default function CheckoutPage() {
                             className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md"
                         >
                             <h2 className="text-xl font-marcellus text-white mb-6">Payment Method</h2>
-                            <div className="grid grid-cols-1 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Bank Details */}
+                                <div className="p-6 bg-gradient-to-br from-gray-900 to-black rounded-xl border border-white/10 flex flex-col justify-center">
+                                    <h3 className="text-gold font-bold mb-4 flex items-center gap-2">
+                                        <ShieldCheck size={18} /> Bank Transfer
+                                    </h3>
+                                    <div className="space-y-3 font-mono text-sm">
+                                        <div>
+                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Bank Name</span>
+                                            <span className="text-white">Bank of Baroda</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Number</span>
+                                            <span className="text-white text-lg tracking-wider">7930 0100 0037 75</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">IFSC Code</span>
+                                            <span className="text-white">BARB0VJIETM</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Holder</span>
+                                            <span className="text-white">IEDC IET Lucknow</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* UPI QR Code */}
                                 <div className="flex flex-col items-center p-6 bg-white rounded-xl border border-gold/50 shadow-[0_0_15px_rgba(255,215,0,0.1)]">
                                     <h3 className="text-black font-bold mb-4">Scan to Pay</h3>
-                                    <div className="w-48 h-48 bg-gray-200 relative mb-4">
+                                    <div className="w-40 h-40 bg-gray-200 relative mb-4">
                                         <Image
                                             src="/images/qr.png"
                                             alt="UPI QR Code"
@@ -370,43 +395,43 @@ export default function CheckoutPage() {
                                     </div>
                                     <p className="text-black text-xs font-mono">UPI ID: encore@upi</p>
                                 </div>
+                            </div>
 
-                                {/* Verification Inputs */}
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-xs uppercase text-gold mb-1 tracking-wider">Transaction ID / UTR <span className="text-red-500">*</span></label>
+                            {/* Verification Inputs */}
+                            <div className="space-y-4 mt-6">
+                                <div>
+                                    <label className="block text-xs uppercase text-gold mb-1 tracking-wider">Transaction ID / UTR <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter 12-digit UTR Number"
+                                        className="w-full bg-black/50 border border-white/20 rounded p-3 text-white focus:border-gold outline-none"
+                                        value={utr}
+                                        onChange={(e) => setUtr(e.target.value)}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs uppercase text-gold mb-1 tracking-wider">Payment Screenshot <span className="text-red-500">*</span></label>
+                                    <div className="relative border-2 border-dashed border-white/20 rounded-lg p-6 hover:border-gold/50 transition-colors text-center cursor-pointer group">
                                         <input
-                                            type="text"
-                                            placeholder="Enter 12-digit UTR Number"
-                                            className="w-full bg-black/50 border border-white/20 rounded p-3 text-white focus:border-gold outline-none"
-                                            value={utr}
-                                            onChange={(e) => setUtr(e.target.value)}
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileUpload}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                         />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs uppercase text-gold mb-1 tracking-wider">Payment Screenshot <span className="text-red-500">*</span></label>
-                                        <div className="relative border-2 border-dashed border-white/20 rounded-lg p-6 hover:border-gold/50 transition-colors text-center cursor-pointer group">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleFileUpload}
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            />
-                                            {screenshot ? (
-                                                <div className="relative h-32 w-full">
-                                                    <Image src={screenshot} alt="Preview" fill className="object-contain" />
-                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <span className="text-white text-xs">Click to Change</span>
-                                                    </div>
+                                        {screenshot ? (
+                                            <div className="relative h-32 w-full">
+                                                <Image src={screenshot} alt="Preview" fill className="object-contain" />
+                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <span className="text-white text-xs">Click to Change</span>
                                                 </div>
-                                            ) : (
-                                                <div className="text-gray-400">
-                                                    <p className="text-sm mb-1">Click to Upload Proof</p>
-                                                    <p className="text-[10px] uppercase tracking-widest text-gray-600">JPG, PNG allowed</p>
-                                                </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-gray-400">
+                                                <p className="text-sm mb-1">Click to Upload Proof</p>
+                                                <p className="text-[10px] uppercase tracking-widest text-gray-600">JPG, PNG allowed</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
