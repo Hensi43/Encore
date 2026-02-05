@@ -13,13 +13,25 @@ export async function POST(request: Request) {
 
         const user = await prisma.user.findUnique({
             where: { email },
+            include: { orders: true }
         });
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ user }, { status: 200 });
+        // Check if user has ANY order with a passType (PENDING or PAID)
+        const passOrder = user.orders.find(o => o.passType !== null && o.passType !== undefined);
+        const hasPass = !!passOrder;
+        const passStatus = passOrder ? passOrder.status : null;
+
+        return NextResponse.json({
+            user: {
+                ...user,
+                hasPass,
+                passStatus
+            }
+        }, { status: 200 });
 
     } catch {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

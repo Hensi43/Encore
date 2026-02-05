@@ -85,7 +85,7 @@ export default function LoginForm() {
                 setModalState({
                     isOpen: true,
                     title: "Login Failed",
-                    message: "Invalid email or password.",
+                    message: res.error, // Show actual error from backend
                     type: "error"
                 });
             } else {

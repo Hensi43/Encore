@@ -16,12 +16,18 @@ export default function RegistrationPopup() {
 
         // Show popup shortly after hydration
         const timer = setTimeout(() => {
-            // Check if we've already shown it this session if desired
-            // const hasShown = sessionStorage.getItem("registrationPopupShown");
-            // if (!hasShown) {
-            setIsOpen(true);
-            // sessionStorage.setItem("registrationPopupShown", "true");
-            // }
+            // Check if we've already shown it this session
+            const hasShown = sessionStorage.getItem("registrationPopupShown");
+
+            if (!hasShown) {
+                setIsOpen(true);
+                sessionStorage.setItem("registrationPopupShown", "true");
+            } else {
+                // If already shown, ensure hero animation starts immediately
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new Event('start-hero-animation'));
+                }
+            }
         }, 1000); // 1 second delay for dramatic effect
 
         return () => clearTimeout(timer);

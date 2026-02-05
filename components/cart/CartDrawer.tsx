@@ -155,17 +155,14 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <div className="bg-[#2a2510] border border-[#D4AF37]/20 rounded-lg py-3 px-4 text-center">
-                                        <p className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest">
-                                            Payment Temporarily Disabled
-                                        </p>
-                                    </div>
-
                                     <Button
-                                        disabled
-                                        className="w-full bg-[#2a2a2a] text-gray-400 font-cinzel text-sm uppercase tracking-widest h-14 rounded-full flex items-center justify-center gap-2 cursor-not-allowed border border-white/5 hover:bg-[#2a2a2a]"
+                                        onClick={() => {
+                                            onClose();
+                                            router.push("/checkout");
+                                        }}
+                                        className="w-full bg-[#D4AF37] text-black font-cinzel text-sm uppercase tracking-widest h-14 rounded-full flex items-center justify-center gap-2 hover:bg-[#D4AF37]/90 transition-colors shadow-lg shadow-[#D4AF37]/20"
                                     >
-                                        Payments Coming Soon <ArrowRight size={16} />
+                                        Proceed to Checkout <ArrowRight size={16} />
                                     </Button>
                                 </div>
                             </div>

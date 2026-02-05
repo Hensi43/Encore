@@ -422,7 +422,11 @@ export default function AdminPanel() {
                                     <p className="text-gray-500 text-sm italic">No additional event orders.</p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {verifyingUser.orders.map((order) => (
+                                        {[...verifyingUser.orders].sort((a, b) => {
+                                            if (a.status === 'PENDING' && b.status !== 'PENDING') return -1;
+                                            if (a.status !== 'PENDING' && b.status === 'PENDING') return 1;
+                                            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                                        }).map((order) => (
                                             <div key={order.id} className="flex flex-col gap-2 border-b border-white/5 pb-4 last:border-0 last:pb-0 bg-black/20 p-3 rounded">
                                                 <div className="flex justify-between items-start">
                                                     <div>
@@ -657,6 +661,12 @@ export default function AdminPanel() {
                                         (user.id?.toLowerCase() || '').includes(query) ||
                                         (user.paymentId?.toLowerCase() || '').includes(query)
                                     );
+                                }).sort((a, b) => {
+                                    const aHasPending = a.orders?.some(o => o.status === 'PENDING');
+                                    const bHasPending = b.orders?.some(o => o.status === 'PENDING');
+                                    if (aHasPending && !bHasPending) return -1;
+                                    if (!aHasPending && bHasPending) return 1;
+                                    return 0;
                                 }).map((user) => {
 
 

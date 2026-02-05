@@ -98,14 +98,18 @@ export default function CartPage() {
                                     <div className="flex items-center gap-4 w-full sm:w-auto">
                                         <div className="w-16 h-16 relative rounded-md overflow-hidden bg-gray-800">
                                             <Image
-                                                src={`/images/event/${[
-                                                    "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
-                                                    "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
-                                                    "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
-                                                    "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
-                                                    "group-dance", "jam"
-                                                ].indexOf(item.eventSlug) + 1
-                                                    }.jpg`} // Quick hack for image mapping based on slug order provided in data.ts or just a placeholder
+                                                src={(function () {
+                                                    const slugs = [
+                                                        "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
+                                                        "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
+                                                        "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
+                                                        "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
+                                                        "group-dance", "jam"
+                                                    ];
+                                                    const index = slugs.indexOf(item.eventSlug);
+                                                    if (index === -1) return "/images/logo.png";
+                                                    return `/images/event/${index + 1}.jpg`;
+                                                })()}
                                                 alt={item.eventName}
                                                 fill
                                                 className="object-cover"
@@ -154,16 +158,11 @@ export default function CartPage() {
                                 </div>
                             </div>
 
-                            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg mb-2">
-                                <p className="text-yellow-500 text-xs text-center font-bold">
-                                    PAYMENT TEMPORARILY DISABLED
-                                </p>
-                            </div>
                             <button
-                                disabled
-                                className="w-full py-3 bg-gray-700 text-gray-400 font-bold rounded-lg flex items-center justify-center gap-2 cursor-not-allowed opacity-50"
+                                onClick={() => router.push("/checkout")}
+                                className="w-full py-3 bg-gradient-to-r from-gold to-amber-600 text-black font-bold rounded-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform shadow-lg shadow-gold/20"
                             >
-                                Payments Coming Soon
+                                Proceed to Checkout
                                 <ArrowRight size={20} />
                             </button>
                         </div>

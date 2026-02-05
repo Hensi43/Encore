@@ -131,7 +131,7 @@ export default function CheckoutPage() {
         }
     };
 
-    const passPrice = (user?.totalPaid > 0) ? 0 : (selectedPass === 'basic' ? 399 : 999);
+    const passPrice = (user?.hasPass) ? 0 : (selectedPass === 'basic' ? 399 : 999);
     const securityDeposit = (passPrice > 0) ? 200 : 0;
     const itemsTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
     const finalTotal = itemsTotal + passPrice + securityDeposit;
@@ -243,14 +243,20 @@ export default function CheckoutPage() {
                         >
                             <h2 className="text-xl font-marcellus text-white mb-6">Select Entry Pass</h2>
 
-                            {user?.totalPaid > 0 ? (
-                                <div className="p-4 border border-green-500/30 bg-green-900/10 rounded-xl flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                            {user?.hasPass ? (
+                                <div className={`p-4 border rounded-xl flex items-center gap-4 ${user.passStatus === 'PENDING' ? 'border-yellow-500/30 bg-yellow-900/10' : 'border-green-500/30 bg-green-900/10'}`}>
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${user.passStatus === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}>
                                         <CheckCircle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-green-400">Pass Already Active</h3>
-                                        <p className="text-sm text-gray-400">You have already purchased a Fest Pass. Proceed to buy event tickets.</p>
+                                        <h3 className={`font-bold ${user.passStatus === 'PENDING' ? 'text-yellow-400' : 'text-green-400'}`}>
+                                            {user.passStatus === 'PENDING' ? 'Pass Verification Pending' : 'Pass Active'}
+                                        </h3>
+                                        <p className="text-sm text-gray-400">
+                                            {user.passStatus === 'PENDING'
+                                                ? 'Your pass purchase is pending verification. You cannot purchase another pass.'
+                                                : 'You have already purchased a Fest Pass.'}
+                                        </p>
                                     </div>
                                 </div>
                             ) : (
@@ -321,13 +327,18 @@ export default function CheckoutPage() {
                                         <div key={item.id} className="flex items-center gap-4 bg-black/20 p-3 rounded-lg border border-white/5">
                                             <div className="w-12 h-12 relative bg-gray-800 rounded overflow-hidden shrink-0">
                                                 <Image
-                                                    src={`/images/event/${Math.max(1, [
-                                                        "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
-                                                        "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
-                                                        "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
-                                                        "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
-                                                        "group-dance", "jam"
-                                                    ].indexOf(item.eventSlug) + 1)}.jpg`}
+                                                    src={(function () {
+                                                        const slugs = [
+                                                            "darpan", "reel-making", "treasure-hunt", "marketing-mania", "picture-story", "dance-battle",
+                                                            "debate", "open-stage", "solo-singing", "band-war", "graffiti", "face-painting", "monoact",
+                                                            "tshirt-painting", "case-study", "live-sketching", "pageant", "relay-rangoli", "nukkad",
+                                                            "rap-battle", "mimicry", "solo-dance", "short-film", "auction", "mun", "twist-a-tale",
+                                                            "group-dance", "jam"
+                                                        ];
+                                                        const index = slugs.indexOf(item.eventSlug);
+                                                        if (index === -1) return "/images/logo.png";
+                                                        return `/images/event/${index + 1}.jpg`;
+                                                    })()}
                                                     alt={item.eventName}
                                                     fill
                                                     className="object-cover"

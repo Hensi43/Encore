@@ -5,72 +5,80 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user?.email) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Get User and Cart
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: {
-            cart: {
-                include: { items: true },
-            },
-        },
-    });
-
-    if (!user || !user.cart || user.cart.items.length === 0) {
-        return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
-    }
-
-    const { passType, paymentId, paymentScreenshot } = await req.json().catch(() => ({ passType: null }));
-
-    const cartItems = user.cart.items;
-    let totalAmount = cartItems.reduce((sum, item) => sum + item.price, 0);
-
-    // Add Pass Price (Only if not already paid)
-    let passPrice = 0;
-    let securityDeposit = 0;
-    if (user.totalPaid === 0) {
-        if (passType === 'basic') passPrice = 399;
-        if (passType === 'accommodation') passPrice = 999;
-
-        if (passPrice > 0) {
-            securityDeposit = 200;
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user?.email) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-    }
-    totalAmount += passPrice + securityDeposit;
 
-    // Validate Payment Proof for Paid Orders
-    if (totalAmount > 0 && (!paymentId || !paymentScreenshot)) {
-        return NextResponse.json({ error: "Payment proof missing" }, { status: 400 });
-    }
-
-    // Create Order
-    const order = await prisma.order.create({
-        data: {
-            userId: user.id,
-            totalAmount: totalAmount,
-            status: "PENDING",
-            passType: passType,
-            paymentId: paymentId,
-            paymentScreenshot: paymentScreenshot,
-            securityDeposit: securityDeposit,
-            items: {
-                create: cartItems.map((item) => ({
-                    eventSlug: item.eventSlug,
-                    eventName: item.eventName,
-                    price: item.price,
-                })),
+        // Get User and Cart
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            include: {
+                cart: {
+                    include: { items: true },
+                },
             },
-        },
-    });
+        });
 
-    // Clear Cart
-    await prisma.cartItem.deleteMany({
-        where: { cartId: user.cart.id },
-    });
+        if (!user || !user.cart || user.cart.items.length === 0) {
+            return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+        }
 
-    return NextResponse.json({ success: true, orderId: order.id });
+        const { passType, paymentId, paymentScreenshot } = await req.json().catch(() => ({ passType: null }));
+
+        const cartItems = user.cart.items;
+        let totalAmount = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+        // Add Pass Price (Only if not already paid)
+        let passPrice = 0;
+        let securityDeposit = 0;
+        if (user.totalPaid === 0) {
+            if (passType === 'basic') passPrice = 399;
+            if (passType === 'accommodation') passPrice = 999;
+
+            if (passPrice > 0) {
+                securityDeposit = 200;
+            }
+        }
+        totalAmount += passPrice + securityDeposit;
+
+        // Validate Payment Proof for Paid Orders
+        if (totalAmount > 0 && (!paymentId || !paymentScreenshot)) {
+            return NextResponse.json({ error: "Payment proof missing" }, { status: 400 });
+        }
+
+        // Create Order
+        const order = await prisma.order.create({
+            data: {
+                userId: user.id,
+                totalAmount: totalAmount,
+                status: "PENDING",
+                passType: passType,
+                paymentId: paymentId,
+                paymentScreenshot: paymentScreenshot,
+                securityDeposit: securityDeposit,
+                items: {
+                    create: cartItems.map((item) => ({
+                        eventSlug: item.eventSlug,
+                        eventName: item.eventName,
+                        price: item.price,
+                    })),
+                },
+            },
+        });
+
+        // Clear Cart
+        await prisma.cartItem.deleteMany({
+            where: { cartId: user.cart.id },
+        });
+
+        return NextResponse.json({ success: true, orderId: order.id });
+    } catch (error) {
+        console.error("Critical Checkout Error:", error);
+        return NextResponse.json(
+            { error: "Internal Server Error", details: (error as Error).message },
+            { status: 500 }
+        );
+    }
 }

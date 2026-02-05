@@ -21,7 +21,7 @@ model User {
   year            String?
   accommodation   String?
   paymentId       String?
-  paymentScreenshot String? // URL or Base64 of payment proof
+  paymentScreenshot String? @db.LongText // URL or Base64 of payment proof
   totalPaid       Int       @default(0) // 399 or 999 usually
 
   paymentVerified Boolean  @default(false)
@@ -86,7 +86,7 @@ model Order {
   totalAmount   Int
   status        String      @default("PENDING") // PENDING, PAID, FAILED
   paymentId     String?     // External Payment ID (Razorpay etc) or UTR
-  paymentScreenshot String? // Base64 or URL of payment proof
+  paymentScreenshot String? @db.LongText // Base64 or URL of payment proof
   passType      String?     // 'basic' (99) or 'premium' (399) or null
   securityDeposit Int       @default(0) // Refundable deposit
   createdAt     DateTime    @default(now())
