@@ -20,7 +20,7 @@ export default function FAQ() {
             {/* Global background visible */}
 
             {/* Bg graphic matching the original site */}
-            <div className="absolute inset-0 bg-[url('/images/faqmob.svg')] bg-cover bg-center opacity-10 pointer-events-none mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[url('/images/home/party_crowd.png')] bg-cover bg-center opacity-10 pointer-events-none mix-blend-overlay" />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
 

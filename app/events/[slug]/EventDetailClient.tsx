@@ -44,7 +44,7 @@ export default function EventDetailClient() {
 
             {/* Banner */}
             <div className="relative h-[60vh] w-full">
-                <Image src="/images/s5.svg" alt="Banner" fill className="object-cover opacity-50" />
+                <Image src="/images/bg2.jpg" alt="Banner" fill className="object-cover opacity-50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
                 <div className="absolute bottom-10 left-0 w-full px-6 md:px-12 max-w-7xl mx-auto">
