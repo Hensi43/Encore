@@ -399,16 +399,37 @@ export default function AdminPanel() {
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <p className="text-xl text-white font-cinzel mb-1">
-                                            {verifyingUser.orders?.some(o => o.passType) ? (
-                                                verifyingUser.orders.find(o => o.passType)?.passType === 'accommodation' ? 'Accommodation Pass' : 'Basic Pass'
-                                            ) : (verifyingUser.accommodation === 'yes' ? 'Legacy Accommodation' : 'Legacy/Standby')}
+                                            {(function () {
+                                                const paidPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PAID');
+                                                const pendingPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PENDING');
+                                                const passOrder = paidPass || pendingPass;
+
+                                                if (passOrder) {
+                                                    return passOrder.passType === 'accommodation' ? 'Accommodation Pass' : 'Basic Pass';
+                                                }
+                                                return verifyingUser.accommodation === 'yes' ? 'Legacy Accommodation' : 'Legacy/Standby';
+                                            })()}
                                         </p>
                                         <p className="text-xs text-gray-500 uppercase tracking-widest">
-                                            {verifyingUser.orders?.some(o => o.passType) ? 'Linked to Order' : 'Check Orders Below'}
+                                            {(function () {
+                                                const paidPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PAID');
+                                                const pendingPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PENDING');
+
+                                                if (paidPass) return <span className="text-green-400 font-bold">ACTIVE (PAID)</span>;
+                                                if (pendingPass) return <span className="text-yellow-400 font-bold">PAYMENT PENDING</span>;
+                                                return 'Check Orders Below';
+                                            })()}
                                         </p>
                                     </div>
                                     <span className="text-lg font-mono text-gray-400">
-                                        {verifyingUser.orders?.some(o => o.passType) ? 'Included in Order Total' : 'N/A'}
+                                        {(function () {
+                                            const paidPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PAID');
+                                            const pendingPass = verifyingUser.orders?.find(o => o.passType && o.status === 'PENDING');
+
+                                            if (paidPass) return "Verif. Complete";
+                                            if (pendingPass) return "Verif. Pending";
+                                            return "N/A";
+                                        })()}
                                     </span>
                                 </div>
                             </div>
@@ -472,9 +493,8 @@ export default function AdminPanel() {
                                     </div>
                                 )}
                                 <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
-                                    <span className="text-gray-400 text-xs uppercase">Total Orders Value</span>
                                     <span className="text-xl font-mono text-white">
-                                        ₹{verifyingUser.orders?.reduce((sum: number, o) => o.status === 'PAID' ? sum + o.totalAmount : sum, 0) || 0}
+                                        ₹{verifyingUser.orders?.reduce((sum: number, o) => sum + o.totalAmount, 0) || 0}
                                     </span>
                                 </div>
                             </div>
