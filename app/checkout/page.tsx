@@ -131,7 +131,7 @@ export default function CheckoutPage() {
         }
     };
 
-    const passPrice = (user?.hasPass) ? 0 : (selectedPass === 'basic' ? 399 : 999);
+    const passPrice = (user?.hasPass) ? 0 : (selectedPass === 'basic' ? 399 : 499);
     const securityDeposit = (passPrice > 0) ? 200 : 0;
     const itemsTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
     const finalTotal = itemsTotal + passPrice + securityDeposit;
@@ -300,7 +300,16 @@ export default function CheckoutPage() {
                                                 {selectedPass === 'accommodation' && <CheckCircle className="text-purple-400" size={18} />}
                                             </div>
                                             <h3 className="text-xl font-cinzel text-white mb-1">All Access + Stay</h3>
-                                            <div className="text-2xl font-bold text-purple-400 mb-4">₹999</div>
+                                            <div className="flex flex-col mb-4">
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="text-2xl font-bold text-purple-400">₹499</span>
+                                                    <span className="text-xs text-gray-400 uppercase tracking-widest">Pay Now</span>
+                                                </div>
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="text-sm font-bold text-gray-500">+ ₹500</span>
+                                                    <span className="text-[10px] text-gray-600 uppercase tracking-widest">At Desk</span>
+                                                </div>
+                                            </div>
                                             <ul className="space-y-2 text-xs text-gray-400">
                                                 <li className="flex gap-2"><span className="text-purple-400">✓</span> Access to all 3 Days</li>
                                                 <li className="flex gap-2"><span className="text-purple-400">✓</span> Concert Entry</li>

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         let securityDeposit = 0;
         if (user.totalPaid === 0) {
             if (passType === 'basic') passPrice = 399;
-            if (passType === 'accommodation') passPrice = 999;
+            if (passType === 'accommodation') passPrice = 499;
 
             if (passPrice > 0) {
                 securityDeposit = 200;
