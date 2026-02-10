@@ -51,44 +51,49 @@ export default function EventsPage() {
                 <div className="space-y-16">
                     {[
                         {
-                            id: "dance",
-                            title: "Dance Club",
-                            events: eventsData.filter(e => ["Dance (Solo)", "Dance (Duo)", "Dance (Group)", "Dance"].includes(e.category))
+                            id: "main-events",
+                            title: "Main Events",
+                            events: eventsData.filter(e => e.category === "Main Events")
                         },
                         {
-                            id: "music",
-                            title: "Music Club",
-                            events: eventsData.filter(e => ["Singing (Solo)", "Singing (Group)"].includes(e.category))
+                            id: "e-sports",
+                            title: "E-Sports",
+                            events: eventsData.filter(e => e.category === "E-Sports Events")
                         },
                         {
-                            id: "dramatics",
-                            title: "Dramatics Club",
-                            events: eventsData.filter(e => ["Dramatics (Group)", "Dramatics (Solo)", "Dramatics (Group/ Solo)", "Dramatics"].includes(e.category))
+                            id: "josh",
+                            title: "Josh",
+                            events: eventsData.filter(e => e.category === "Josh")
                         },
                         {
-                            id: "fine-arts",
-                            title: "Fine Arts Club",
-                            events: eventsData.filter(e => ["Art and Craft", "Art"].includes(e.category))
+                            id: "insaniax",
+                            title: "Insaniax",
+                            events: eventsData.filter(e => e.category === "Insaniax")
                         },
                         {
-                            id: "photography",
-                            title: "Photography & Film Club",
-                            events: eventsData.filter(e => ["Mirage (Solo)", "Mirage (Group)"].includes(e.category))
+                            id: "kalakriti",
+                            title: "Kalakriti",
+                            events: eventsData.filter(e => e.category === "Kalakriti")
                         },
                         {
-                            id: "literary",
-                            title: "Literary Club",
-                            events: eventsData.filter(e => ["Literary (Solo)", "Literary (Individual / pair)", "Literary (Group)", "Literary (Solo/ Group)"].includes(e.category))
+                            id: "e-cell",
+                            title: "E-Cell",
+                            events: eventsData.filter(e => e.category === "E-Cell")
                         },
                         {
-                            id: "business",
-                            title: "Business & Management",
-                            events: eventsData.filter(e => ["E-cell (Group)", "Business", "MUN"].includes(e.category))
+                            id: "swaranjali",
+                            title: "Swaranjali & Auroras",
+                            events: eventsData.filter(e => e.category === "Swaranjali & Auroras")
                         },
                         {
-                            id: "special",
-                            title: "Special Events",
-                            events: eventsData.filter(e => ["Fun", "Pageant"].includes(e.category))
+                            id: "mirage",
+                            title: "Mirage",
+                            events: eventsData.filter(e => e.category === "Mirage")
+                        },
+                        {
+                            id: "excelsior",
+                            title: "Excelsior",
+                            events: eventsData.filter(e => e.category === "Excelsior")
                         }
                     ].map((section, idx) => (
                         section.events.length > 0 && (
@@ -123,10 +128,17 @@ export default function EventsPage() {
                                                             {event.category}
                                                         </span>
                                                     </div>
+
+                                                    {/* Price Badge */}
+                                                    <div className="absolute top-4 right-4">
+                                                        <span className="px-4 py-2 bg-black/80 backdrop-blur-md border border-gold/50 text-gold text-base md:text-lg font-bold uppercase tracking-wider rounded-md shadow-lg">
+                                                            {event.price > 0 ? `₹${event.price}` : 'Free'}
+                                                        </span>
+                                                    </div>
                                                 </div>
 
                                                 {/* Quick Add Button - Appears on Hover */}
-                                                <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                                <div className="absolute top-14 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
                                                     <button
                                                         onClick={(e) => handleQuickAdd(e, event)}
                                                         className="bg-gold text-black p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all"

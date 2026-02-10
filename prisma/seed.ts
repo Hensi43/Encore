@@ -16,9 +16,15 @@ const colleges = [
 ];
 
 const eventSlugs = [
-    "cosplay", "battle-of-bands", "group-dance", "solo-singing", "fashion-show",
-    "nukkad-natak", "robotics", "coding-contest", "bgmi", "valorant",
-    "debate", "quiz", "photography", "short-film"
+    "fashion-show", "prom-night", "bgmi", "free-fire", "stumble-guys",
+    "nukkad", "cosplay", "mimicry", "mime", "skit", "monoact",
+    "solo-dance", "duo-dance", "group-dance", "dance-battle",
+    "relay-rangoli", "live-sketching", "brush-the-theme", "face-painting",
+    "startup-auction", "treasure-hunt", "market-mania",
+    "solo-singing", "rap", "band-wars", "jamming",
+    "reel-making", "short-film", "photostory", "photography",
+    "essay-writing", "twist-a-tale", "debate", "jam", "lit-quiz",
+    "open-stage", "open-stage-poetry"
 ];
 
 const firstNames = ["Aarav", "Vivaan", "Aditya", "Vihaan", "Arjun", "Sai", "Reyansh", "Ayan", "Krishna", "Ishaan", "Shaurya", "Atharv", "Advik", "Pranav", "Advaith", "Aaryan", "Dhruv", "Kabir", "Rudra", "Riyan", "Ananya", "Diya", "Saanvi", "Aadhya", "Pari", "Siya"];

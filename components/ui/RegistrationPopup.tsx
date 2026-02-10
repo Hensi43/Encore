@@ -107,7 +107,7 @@ export default function RegistrationPopup() {
                                         DAYS
                                     </p> */}
                                     <div className="scale-75 origin-center -my-2">
-                                        <CountdownTimer targetDate="2026-02-08T00:00:00" />
+                                        <CountdownTimer targetDate="2026-02-14T00:00:00" />
                                     </div>
                                     <p className="text-sm text-[#D4AF37]/80 mt-1 uppercase tracking-widest">
                                         League Of Legacy

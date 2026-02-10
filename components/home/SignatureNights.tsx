@@ -19,11 +19,10 @@ export default function SignatureNights() {
             delay: 0.2
         },
         {
-            title: "MALTI CHAHAR",
-            subtitle: "Celebrity Appearance",
-            image: "/images/guests/malti_chahar.png",
-            // customBackground: "radial-gradient(circle at center, #785a28 0%, #3e2808 60%, #000000 100%)", // Rich gold/brown radial
-            customBackground: "radial-gradient(circle at 50% 30%, #6d4c41 0%, #3e2723 40%, #000000 100%)", // Warm sexy dark tone
+            title: "Revealing Soon",
+            subtitle: "Stay Tuned",
+            image: null, // Mystery
+            color: "from-gray-900 to-black",
             delay: 0.4
         }
     ];
@@ -52,7 +51,7 @@ export default function SignatureNights() {
                                     {/* Custom Background for Guest */}
                                     <div
                                         className="absolute inset-0 z-0"
-                                        style={{ background: night.customBackground || 'black' }}
+                                        style={{ background: 'black' }}
                                     />
 
                                     {/* Gradient Pulse Effect for "Sexy" vibe */}

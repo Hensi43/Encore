@@ -115,14 +115,7 @@ export default function EventDetailClient() {
                         </div>
 
                         <div className="space-y-4 mb-6">
-                            <div className="flex items-center gap-3 text-gray-300">
-                                <Calendar className="text-gold" size={20} />
-                                <span>Feb 19-21, 2025</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-gray-300">
-                                <Clock className="text-gold" size={20} />
-                                <span>10:00 AM Onwards</span>
-                            </div>
+                            {/* Date and Time removed as per request */}
                             <div className="flex items-center gap-3 text-gray-300">
                                 <MapPin className="text-gold" size={20} />
                                 <span>IET Lucknow Campus</span>
@@ -132,7 +125,7 @@ export default function EventDetailClient() {
 
                         <div className="flex items-center justify-between text-gray-300 lg:text-lg mb-2">
                             <span>Registration Fee:</span>
-                            <span className="text-gold font-bold text-2xl">₹{event.price || 150}</span>
+                            <span className="text-gold font-bold text-2xl">{event.price > 0 ? `₹${event.price}` : "Free"}</span>
                         </div>
 
                         <Button

